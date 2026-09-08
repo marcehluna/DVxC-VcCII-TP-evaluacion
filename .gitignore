@@ -1,1 +1,24 @@
 carpeta-interna/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Datos y artefactos pesados
+data/raw/**
+!data/raw/.gitkeep
+data/processed/**
+!data/processed/.gitkeep
+*.pt
+*.pth
+*.onnx
+*.weights
+runs/
+wandb/
+
+# Notebooks checkpoints / OS
+.ipynb_checkpoints/
+.DS_Store

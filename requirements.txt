@@ -1,0 +1,23 @@
+# Dependencias mínimas — TP auditoría bibliográfica
+
+# Núcleo detección
+ultralytics>=8.0.0
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+opencv-python-headless>=4.8.0
+Pillow>=10.0.0
+pycocotools>=2.0.7
+PyYAML>=6.0
+tqdm>=4.66.0
+matplotlib>=3.7.0
+pandas>=2.0.0
+
+# Dataset / Roboflow (opcional para descarga por API)
+roboflow>=1.1.0
+
+# Extensión OCR
+easyocr>=1.7.0
+
+# Extensión matching
+rapidfuzz>=3.0.0

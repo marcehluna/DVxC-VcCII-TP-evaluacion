@@ -13,7 +13,7 @@ tqdm>=4.66.0
 matplotlib>=3.7.0
 pandas>=2.0.0
 
-# Dataset / Roboflow (opcional para descarga por API)
+# Dataset / Roboflow (opcional, para bajar por API)
 roboflow>=1.1.0
 
 # Extensión OCR

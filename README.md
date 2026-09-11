@@ -9,7 +9,8 @@ Repo del TP de evaluación de Visión por Computadora II (CEIA).
 | Carpeta | Uso |
 | :--- | :--- |
 | `concepto/` | Definición y plan del TP |
-| `data/` | Dataset (raw/processed; no se versiona el contenido pesado) |
+| `dataset/` | Book Spine 2 (no se versiona; descarga idempotente) |
+| `data/` | Instrucciones y versión/splits congelados |
 | `src/` | Scripts de train / eval / OCR / matching |
 | `notebooks/` | Experimentos Colab |
 | `results/` | Tablas, figuras y predicciones |

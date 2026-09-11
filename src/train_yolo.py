@@ -1,4 +1,4 @@
-"""Fine-tuning YOLOv8 sobre Book Spine 2 (Ultralytics)."""
+"""Ajuste fino de YOLOv8 sobre Book Spine 2 (Ultralytics)."""
 
 
 def main() -> None:

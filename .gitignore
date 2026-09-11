@@ -1,5 +1,8 @@
 carpeta-interna/
 
+# Cursor — reglas y config local, no versionar
+.cursor/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -8,6 +11,7 @@ venv/
 .env
 
 # Datos y artefactos pesados
+dataset/
 data/raw/**
 !data/raw/.gitkeep
 data/processed/**

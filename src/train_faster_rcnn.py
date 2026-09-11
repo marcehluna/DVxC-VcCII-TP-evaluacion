@@ -1,4 +1,4 @@
-"""Fine-tuning Faster R-CNN (torchvision) sobre Book Spine 2."""
+"""Ajuste fino de Faster R-CNN (torchvision) sobre Book Spine 2."""
 
 
 def main() -> None:

@@ -1,6 +1,6 @@
 # Arquitecturas candidatas — detección de lomos
 
-Nota interna. El paper compara **un** YOLO vs. **un** Faster R-CNN (AABB, una clase, Colab T4, `imgsz` ≥ 640). Acá están las variantes de cada familia que alcanzan para cerrar ese núcleo, y cuáles no conviene abrir.
+Nota interna. El paper compara **un** YOLO vs. **un** Faster R-CNN (AABB, una clase, Colab T4, `imgsz` ≥ 640). Acá están las variantes de cada familia que alcanzan para cerrar ese núcleo, candidatas **secundarias** de otras familias (ordenadas por el EDA) y cuáles no conviene abrir.
 
 El dataset (Book Spine 2 v4) empuja a: lomos altos y angostos (alto/ancho mediano ~7), estantes densos (NMS ~0,5 mata TP), ~18 % muy inclinados, AABB holgado. Hasta ~67 lomos en una foto de validación.
 
@@ -13,7 +13,7 @@ El dataset (Book Spine 2 v4) empuja a: lomos altos y angostos (alto/ancho median
 
 Smoke / debug (pocas épocas, no es el número del paper): **YOLOv8n** y, si hace falta recortar cómputo, el mismo Faster R-CNN con menos `max_size` **no** — no bajar de 640. Mejor menos épocas.
 
-No son un tercer brazo: YOLOv8-seg (solo para recortar OCR), YOLOv8-obb / Oriented R-CNN (contexto en el paper, `01` Yang).
+No son un tercer brazo del paper: YOLOv8-seg, OBB, RT-DETR, etc. van a related work, a un plan B si A/B fallan, o a OCR (sección de candidatas secundarias).
 
 ---
 
@@ -82,6 +82,23 @@ Esto no es otra arquitectura, pero en este dataset mueve más el resultado que c
 
 ---
 
+## Candidatas secundarias (otras familias)
+
+No están (o casi no están) en los papers del repo. Resuelven detección de lomos, pero **no** entran a la tabla A vs. B. El orden es por cuánto atacan lo que midió el EDA, no por novedad.
+
+| # | Familia | Ejemplos | Qué fallo del dataset ataca | Encaje T4 / curso | Cuándo usarla |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | **Sin NMS** (set prediction) | **RT-DETR**, YOLOv10 | ~23 % de cajas GT en valid ya tienen IoU ≥ 0,5 con un vecino; el NMS a 0,5 mata TP. Un detector end-to-end no tira predicciones por solape. | RT-DETR está en Ultralytics (mismo flujo que YOLO). DETR clásico converge mal en 1.656 fotos. | Plan B del brazo A si el recall en estantes densos es el cuello. Primera secundaria de verdad. |
+| 2 | **Two-stage con caja refinada** | **Cascade R-CNN** | Ocupación AABB ~0,54 y aspecto ~7: Faster R-CNN deja cajas flojas. La cascada achica la caja en etapas. | No viene en torchvision (MMDetection). Más cableado que el brazo B. | Plan B del brazo B si el mAP está bien pero el recorte es inutilizable. |
+| 3 | **Caja orientada (OBB)** | YOLOv8-obb, S²ANet, R³Det; Oriented R-CNN (`01`) | ~18 % de lomos > 45°: el AABB se infla y mezcla vecinos. | Ultralytics-obb es lo más corto. Cambia la métrica (IoU rotado); el par ya no es YOLO AABB vs. Faster R-CNN AABB. | Related work y, si se abre, *en lugar de* AABB en los dos brazos, no mezclado. |
+| 4 | **Máscara de instancia** | YOLOv8-seg, Mask R-CNN (`07`), SOLOv2, CondInst, Mask2Former | El recorte para OCR hereda la holgura del AABB. La máscara recorta el lomo, no el rectángulo. | Seg de Ultralytics o torchvision Mask R-CNN son viables como posproceso. Mask2Former es pesado. | Sobre el **modelo demo**, para F2. No es un tercer detector en la tabla de mAP. |
+| 5 | **Texto primero** | DBNet, CRAFT → agrupar líneas en lomos | Evita detectar “objeto lomo”: localiza texto y arma el libro. | Otro pipeline, otras métricas. | Fuera del núcleo de detección de objetos. Solo si se discute un enfoque distinto en related work. |
+| 6 | **Open-vocab / VLM** | Grounding DINO, Florence-2 | Prompt “book spine” con poco o ningún fine-tune. | Comparación injusta vs. Faster R-CNN; difícil de defender en 4–6 páginas. | Demo ilustrativa o trabajo futuro, no brazo experimental. |
+
+**Lectura del ranking:** el problema duro acá es **estante denso + caja holgada**, no “falta un YOLO más nuevo”. YOLO11 no aparece: es la misma familia AABB+NMS; no cambia el fallo (1). EfficientDet, SSD y RetinaNet tampoco: one-stage con NMS, sin ancla al EDA.
+
+---
+
 ## Cómo elegir sin abrir un abanico
 
 Orden de corridas (siempre el mismo split v4, misma semilla, T4, batch=1 para latencia):
@@ -89,8 +106,8 @@ Orden de corridas (siempre el mismo split v4, misma semilla, T4, batch=1 para la
 1. **Smoke:** YOLOv8n, pocas épocas → figuras y que el mAP no sea 0.
 2. **Brazo A:** YOLOv8s, protocolo completo.
 3. **Brazo B:** Faster R-CNN ResNet-50 FPN v2, mismos splits, `imgsz` comparable.
-4. **Solo si A o B fallan de forma evidente:** YOLOv8m **o** ánclas/NMS en Faster R-CNN (un cambio a la vez).
-5. **Tabla del paper:** un YOLO + un Faster R-CNN. Lo demás va a apéndice o a “intentos descartados”.
+4. **Solo si A o B fallan de forma evidente:** YOLOv8m **o** ánclas/NMS en Faster R-CNN (un cambio a la vez). Si el fallo es NMS en densos, la secundaria #1 es RT-DETR (no un tercer YOLO).
+5. **Tabla del paper:** un YOLO + un Faster R-CNN. Secundarias → related work / apéndice, no una tercera columna.
 
 Criterio del modelo demo (pipeline OCR): mejor balance **mAP@0.5 en validación / ms por imagen**, no el mAP más alto a cualquier costo. Medir también el subconjunto de valid **sin** la misma foto fuente en train (leakage del export Roboflow).
 
@@ -112,7 +129,9 @@ Criterio del modelo demo (pipeline OCR): mejor balance **mAP@0.5 en validación 
 
 ## Fuera de lista (no cierran el TP como está definido)
 
-- Detectores que no sean YOLO ni Faster R-CNN como *los dos* brazos (EfficientDet, DETR, etc.).
+- EfficientDet, SSD, RetinaNet, FCOS como *reemplazo* de A o B: one-stage con NMS, no atacan el EDA.
+- DETR clásico (sin RT): lento de converger en este set.
 - Entrenar from scratch sin COCO: más épocas de las que hay en Colab.
 - Una escala `x` / ResNet-101 “porque es más grande”.
 - Cambiar YOLOv8 → YOLO11 a mitad de F1.
+- Meter una secundaria en la tabla principal “para probar”.

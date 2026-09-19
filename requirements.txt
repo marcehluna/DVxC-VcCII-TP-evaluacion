@@ -12,6 +12,7 @@ PyYAML>=6.0
 tqdm>=4.66.0
 matplotlib>=3.7.0
 pandas>=2.0.0
+torchmetrics>=1.3.0
 
 # Dataset / Roboflow (opcional, para bajar por API)
 roboflow>=1.1.0

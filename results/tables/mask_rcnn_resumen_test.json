@@ -1,0 +1,20 @@
+{
+  "checkpoint": "/content/results/checkpoints/mask_rcnn/mejor_mask_map50.pt",
+  "epoca": 12,
+  "score_eval": 0.5,
+  "iou_eval": 0.5,
+  "resultados": {
+    "imagenes": 120,
+    "gt": 1747,
+    "mask_map50": 0.7762630581855774,
+    "mask_map50_95": 0.5175462365150452,
+    "mask_precision": 0.7567148760330579,
+    "mask_recall": 0.8385804235832857,
+    "box_map50": 0.9474636316299438,
+    "box_map50_95": 0.7500650882720947,
+    "box_precision": 0.8558884297520661,
+    "box_recall": 0.9484831139095592,
+    "latencia_ms": 112.75784844005102,
+    "fps": 8.868562267145965
+  }
+}

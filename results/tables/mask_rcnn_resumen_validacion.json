@@ -1,0 +1,50 @@
+{
+  "checkpoint": "/content/results/checkpoints/mask_rcnn/mejor_mask_map50.pt",
+  "epoca": 12,
+  "hardware": "Tesla T4",
+  "torch": "2.11.0+cu128",
+  "torchvision": "0.26.0+cu128",
+  "score_eval": 0.5,
+  "iou_eval": 0.5,
+  "umbral_mascara": 0.5,
+  "resultados": {
+    "global": {
+      "imagenes": 271,
+      "gt": 4622,
+      "mask_map50": 0.7845774292945862,
+      "mask_map50_95": 0.5073692202568054,
+      "mask_precision": 0.7845652616575035,
+      "mask_recall": 0.8336218087408048,
+      "box_map50": 0.9088946580886841,
+      "box_map50_95": 0.7282472252845764,
+      "box_precision": 0.8643860720830788,
+      "box_recall": 0.9184335785374297,
+      "latencia_ms": 117.33986685998389,
+      "fps": 8.522252724159408
+    },
+    "denso": {
+      "imagenes": 121,
+      "gt": 2296,
+      "mask_map50": 0.6479712128639221,
+      "mask_map50_95": 0.3413068354129791,
+      "mask_precision": 0.660996835443038,
+      "mask_recall": 0.7277874564459931,
+      "box_map50": 0.8918226957321167,
+      "box_map50_95": 0.68698650598526,
+      "box_precision": 0.8136867088607594,
+      "box_recall": 0.8959059233449478
+    },
+    "inclinado": {
+      "imagenes": 72,
+      "gt": 808,
+      "mask_map50": 0.6470088362693787,
+      "mask_map50_95": 0.3349972665309906,
+      "mask_precision": 0.6568627450980392,
+      "mask_recall": 0.7462871287128713,
+      "box_map50": 0.8752995729446411,
+      "box_map50_95": 0.6483045816421509,
+      "box_precision": 0.7875816993464052,
+      "box_recall": 0.8948019801980198
+    }
+  }
+}

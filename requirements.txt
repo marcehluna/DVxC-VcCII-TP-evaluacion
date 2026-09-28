@@ -22,3 +22,6 @@ easyocr>=1.7.0
 
 # Extensión matching
 rapidfuzz>=3.0.0
+
+# Demo local de comparación
+gradio>=5.0,<7.0

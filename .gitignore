@@ -26,3 +26,4 @@ wandb/
 # Notebooks checkpoints / OS
 .ipynb_checkpoints/
 .DS_Store
+.test-artifacts/

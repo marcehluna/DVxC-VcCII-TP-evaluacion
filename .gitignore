@@ -20,6 +20,11 @@ data/processed/**
 *.pth
 *.onnx
 *.weights
+# Excepción: pesos finales versionables del repo
+!pesos/**/*.pt
+!pesos/**/*.pth
+!pesos/**/*.onnx
+!pesos/**/*.weights
 runs/
 wandb/
 

@@ -25,6 +25,8 @@ data/processed/**
 !pesos/**/*.pth
 !pesos/**/*.onnx
 !pesos/**/*.weights
+# Faster R-CNN supera el límite de 100 MB de GitHub; queda solo local
+pesos/faster_rcnn/*.pt
 runs/
 wandb/
 

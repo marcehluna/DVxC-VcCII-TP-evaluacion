@@ -29,6 +29,7 @@ data/processed/**
 pesos/faster_rcnn/*.pt
 runs/
 wandb/
+Book_spine_2-4/
 
 # Notebooks checkpoints / OS
 .ipynb_checkpoints/

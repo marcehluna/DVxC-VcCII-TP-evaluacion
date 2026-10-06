@@ -1,0 +1,20 @@
+crop_id,imagen_origen,easyocr_texto,easyocr_confianza,easyocr_latencia_ms,paddleocr_texto,paddleocr_confianza,paddleocr_latencia_ms
+estante1_000,estante1.jpg,2 1 9 1 = 1,0.675,65811.9,"DE LA MANCHA,I Miguel de Cervantes",0.933,2578.4
+estante1_001,estante1.jpg,1 5 1 2 1 FN,0.563,27232.2,turro y la maldición de Tutangatón,0.916,714.7
+estante1_002,estante1.jpg,Id IOlinò 1 4 Dr. A ( FHONVW VT NOa PSIQUIATRfA IzzOEAe) SALUD opam1eW MENTAL VIJVàJoWIa Pablo OWSIàVLIdOLnV uaWiJd ALFAGUARA un '219n420 Fernando 0 J90/9-+n ' Sorrent:,0.532,200508.3,PSIQUIATRIAI SALUD MENTAI +/A Dr.Pablo ALFAGUARA Fernando Sor,0.905,1298.2
+estante1_003,estante1.jpg,TAUUUUN 1 PRD8I HNNH8M7MS 1 2009,0.349,44544.0,2009,1.0,577.9
+estante1_004,estante1.jpg,4 [ 5 ; 1 f sm,0.627,48414.9,+A sm,0.913,635.0
+estante2_000,estante2.jpg,8 8 { 5 é 1 28,0.706,30553.2,20.000 LEGUAS DE VIAJE SUBMARINO 28,0.971,600.7
+estante2_001,estante2.jpg,90 6 1 5 4 1 5 É € ; 9 { PLAZA UANES,0.488,107746.6,Pablo De Santis,0.957,1003.4
+estante2_002,estante2.jpg,[  8 2 1 5 {,0.37,38112.8,LECCION DE BAILE DE LOS OSITOS TORMONT,0.977,688.8
+estante2_003,estante2.jpg,5 AVENTURAS de TOM SAWYER Mark Twain BILLIKEN,0.772,48057.5,17 AVENTURAS de TOM SAWYER_ Mark Twain BILLIKEN,0.986,714.6
+estante2_004,estante2.jpg,ALFAGUARA Carlos Rodrigues Gesualdi Raros peinados DESDE TOAÑOS,0.868,38513.5,ALFAGUARA Carlos Rodrigues Gesualdi Raros peinados DESDETOANOS,0.985,659.7
+estante2_005,estante2.jpg,[ q 1 2 5 1 2,0.578,39584.3,2,0.994,358.7
+estante2_006,estante2.jpg,f < @ 7 2 5 ; 1 7bn,0.644,36223.4,1 Gaturro y el misterio de las cinco Agathas,0.944,366.3
+estante2_007,estante2.jpg,1 ; 8 ; 1 1 0 ;,0.564,23596.0,Cantaro EL RENIDERO-ELECTRASERGIO DE CECCO-SOFOCLES,0.946,357.3
+estante2_008,estante2.jpg,"8 > 8 , 8 8 1 8 1",0.516,33521.9,cantaro CUENTOS CLASIFICADOS 1 POE - CORTAZAR - BIOY CASARES Y OTROS,0.963,321.7
+estante2_009,estante2.jpg,DESDE EL OJO DEL PEZ Pablo De Santis,0.85,34166.7,DESDE EL OJO DEL PEZ Pablo De Santis,0.944,264.0
+estante2_010,estante2.jpg,9 g 9 : 8 20 1 1,0.495,22332.0,Alejandro Casona  Los arboles mueren de pie -,0.96,327.1
+estante2_011,estante2.jpg,; 8   š,0.247,38974.0,JACKLONDON COLMILLO BLANCO,0.972,313.6
+estante2_012,estante2.jpg,JvQ 1 5 1 } 66( 1,0.629,31837.4,199 EDAF,0.975,295.7
+estante2_013,estante2.jpg,9 G,0.263,19206.4,El Principe CRA,0.787,259.6

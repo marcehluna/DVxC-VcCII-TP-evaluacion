@@ -16,15 +16,13 @@ Redacción continua de secciones; la **revisión de contenido** (ajustes de reda
   4. **YOLO26s-OBB** — detección con cajas orientadas  
   5. **YOLO26s-seg** — segmentación de instancias  
   6. **Mask R-CNN** ResNet-50 FPN — segmentación de instancias  
-- **OCR** sobre lomos localizados: **incluido en el alcance**; sección propia **VII** (experimentación y conclusiones desde `notebooks/OCR.ipynb`). Contenido de esa sección: **pendiente** hasta cerrar la notebook.
+- **OCR** sobre lomos localizados: **incluido en el alcance**; sección propia **VII** (fuente: `notebooks/OCR.ipynb` y `resultados_ocr/`).
 - Organización de resultados: tablas por **tipo de tarea** (AABB / OBB / máscara) más una **tabla resumen** de los seis modelos; OCR en sección/tabla propia. No se mezclan *mAP* de caja AABB, OBB y máscara como si fueran idénticos.
-- Matching de catálogo: pendiente de confirmar si entra al cuerpo o queda como trabajo futuro.
+- Matching de catálogo: en el cuerpo solo como **indicador de utilidad del OCR** (similitud difusa vs. catálogo local, Secc. VII); el matching many-to-many a escala [3] queda como trabajo futuro.
 
 ---
 
 ## Título
-
-**[CONFIRMADO — se puede revisar después]**
 
 Evaluación experimental de YOLOv8, YOLO26 y familias R-CNN para detección y segmentación de lomos de libros
 
@@ -35,15 +33,11 @@ Localización de lomos en estanterías: comparación de detectores AABB, OBB y s
 
 ## Resumen
 
-**[CONFIRMADO — se puede revisar después]**
-
-Este trabajo evalúa la localización de lomos en imágenes de estanterías y la recuperación de texto mediante OCR, tomando como referencia el conjunto *Book Spine 2* (v4). La comparación abarca seis modelos agrupados por representación: YOLOv8s y Faster R-CNN (cajas alineadas a los ejes, AABB), YOLOv8s-OBB y YOLO26s-OBB (cajas orientadas, OBB), y YOLO26s-seg y Mask R-CNN (máscaras de instancia). Para cada tipo de tarea se analizan *mAP*, precisión, recall y latencia, y se estudia además el OCR sobre los lomos localizados. Los resultados muestran compromisos claros entre calidad de localización, recall en escenas densas o inclinadas y velocidad de inferencia, según la representación elegida.
+Este trabajo evalúa la localización de lomos en imágenes de estanterías y la recuperación de texto mediante OCR, tomando como referencia el conjunto *Book Spine 2* (v4). La comparación abarca seis modelos agrupados por representación: YOLOv8s y Faster R-CNN (cajas alineadas a los ejes, AABB), YOLOv8s-OBB y YOLO26s-OBB (cajas orientadas, OBB), y YOLO26s-seg y Mask R-CNN (máscaras de instancia). Se analizan *mAP*, precisión, recall y latencia por tipo de tarea, se evalúa OCR sobre lomos localizados y se implementa un prototipo demostrativo del pipeline elegido. Los resultados muestran compromisos entre calidad de localización, recall en escenas densas o inclinadas y velocidad de inferencia, y sostienen un flujo basado en YOLO26s-seg y PaddleOCR.
 
 ---
 
 ## Palabras clave
-
-**[CONFIRMADO — se puede revisar después]**
 
 detección de lomos, cajas orientadas, segmentación de instancias, OCR, YOLOv8, YOLO26, Faster R-CNN, Mask R-CNN, inventario de libros
 
@@ -51,15 +45,13 @@ detección de lomos, cajas orientadas, segmentación de instancias, OCR, YOLOv8,
 
 ## Tabla comparativa de resultados (material para la sección V)
 
-**[BORRADOR — revisión de contenido diferida]**
-
 ### Notas de lectura (importante)
 
 - **No es un único ranking absoluto:** AABB, OBB y máscara optimizan representaciones distintas; el *mAP@0.5* no es estrictamente comparable entre filas de distinto tipo.
 - **AABB y segmentación (máscara):** protocolo de informe de las notebooks de test con *conf*/*score* ≥ 0,5 e *IoU* ≥ 0,5 (reevaluación del mejor checkpoint en validación), salvo que se indique lo contrario.
-- **OBB:** cifras del *best.pt* validadas por Ultralytics al cierre del entrenamiento en `Model_Test_Yolo8-OBB.ipynb` (25 épocas; val interna Ultralytics sobre 270 imágenes). No hay aún la misma pasada de test/subconjuntos densos-inclinados que en los otros brazos.
+- **OBB:** cifras del *best.pt* validadas por Ultralytics al cierre del entrenamiento en `Model_Test_Yolo8-OBB.ipynb` (25 épocas; val interna Ultralytics sobre 270 imágenes). No se completó la misma pasada de test/subconjuntos densos-inclinados que en AABB y segmentación porque el pipeline de OCR se cerró con YOLO26s-seg.
 - **Latencia OBB:** suma preprocess + inference + postprocess del log de validación Ultralytics (batch de evaluación del trainer; orden de magnitud, no el mismo script batch=1 de las otras notebooks).
-- Fuentes AABB/seg: lecturas actualizadas de notebooks / `entrenamientos/*.md` / `results/tables` (Mask); YOLO8-AABB según registro en `entrenamientos/YOLO8-AABB.md` (corrida documentada de 20 épocas).
+- Fuentes canónicas (coinciden con §V): notebooks de test — YOLO8-AABB (20 ép., best 19), Faster R-CNN (30 ép., best 6), YOLO26s-seg (30 ép., best 24), Mask (`results/tables/mask_rcnn_*`), OBB (`Model_Test_Yolo8-OBB.ipynb`). Algunos `entrenamientos/*.md` (Faster, YOLO26s-seg 20 ép.) están desactualizados respecto de estas corridas.
 
 ### Tabla resumen — los seis modelos (métrica principal en validación)
 
@@ -106,27 +98,23 @@ Nota: para segmentadores, la columna *mAP* es de **máscara**. Mask R-CNN incluy
 
 ### Pendientes para homogeneizar la tabla del paper
 
-1. Reevaluar OBB con el mismo script de informe (*conf* ≥ 0,5, test, densos/inclinados) si se quiere paridad con AABB.  
-2. Confirmar si YOLOv8s-AABB se reentrenó a 30 épocas (hoy el MD de entrenamientos documenta 20).  
-3. Decidir qué figura/tabla entra al IEEE (resumen de seis filas + 1–2 tablas de detalle).
+1. Homogeneizar OBB (*conf* ≥ 0,5, test, densos/inclinados) quedó fuera de alcance: el pipeline se cerró con YOLO26s-seg (trabajo futuro).  
+2. YOLOv8s-AABB: la corrida de referencia es de **20** épocas (best 19); no hay reentrenamiento a 30.  
+3. IEEE (decidido): **TABLA I** = resumen de seis modelos; **TABLA II** = segmentación val/test/subconjuntos. Marcadores en §V.
 
 ---
 
 ## I. Introducción
 
-**[CONFIRMADO — se puede revisar después]**
-
-El control de inventario en bibliotecas y librerías depende con frecuencia de inspecciones visuales por estantería. Automatizar ese proceso a partir de fotografías exige, como mínimo, localizar cada lomo y recuperar el texto visible para contrastarlo con un catálogo. Las cajas alineadas a los ejes (AABB) son un punto de partida habitual; sin embargo, el análisis exploratorio de *Book Spine 2* muestra lomos inclinados, solapes densos y AABB holgados respecto del polígono anotado. Ese diagnóstico motiva ampliar la comparación a cajas orientadas (OBB) y a máscaras de instancia.
+El control de inventario en bibliotecas y librerías depende con frecuencia de inspecciones visuales por estantería. Automatizar ese proceso a partir de fotografías exige, como mínimo, localizar cada lomo y recuperar el texto visible para contrastarlo con un catálogo. Las cajas alineadas a los ejes (AABB) son un punto de partida habitual; sin embargo, trabajos recientes muestran que degradan la localización en lomos inclinados [1], y el análisis exploratorio de *Book Spine 2* confirma además solapes densos y AABB holgados respecto del polígono anotado. Ese diagnóstico motiva ampliar la comparación a cajas orientadas (OBB) y a máscaras de instancia, en la línea de pipelines que combinan detección y OCR sobre lomos [2].
 
 En este trabajo se comparan seis modelos —YOLOv8s y Faster R-CNN (AABB), YOLOv8s-OBB y YOLO26s-OBB (OBB), YOLO26s-seg y Mask R-CNN (máscaras)— y se evalúa OCR sobre los lomos localizados. La contribución es una comparación experimental acotada: mismo conjunto de datos, mismos criterios de informe por tipo de tarea, y foco en el compromiso entre calidad de localización, comportamiento en escenas densas o inclinadas, latencia y utilidad del recorte para OCR.
 
-El resto del artículo organiza el argumento en ese orden: conjunto de datos y protocolo (Secciones III–IV), resultados de localización (Sección V), discusión y elección del localizador (Sección VI), experimentación con OCR (Sección VII) y conclusiones con trabajo futuro (Sección VIII).
+El resto del artículo organiza el argumento en ese orden: conjunto de datos y protocolo (Secciones III–IV), resultados de localización (Sección V), discusión y elección del localizador (Sección VI), experimentación con OCR (Sección VII), prototipo de demostración (Sección VIII) y conclusiones con trabajo futuro (Sección IX).
 
 ---
 
 ## II. Trabajo relacionado
-
-**[CONFIRMADO — se puede revisar después]**
 
 ### A. Inventario visual de lomos
 
@@ -143,8 +131,6 @@ Mask R-CNN [7] extiende Faster R-CNN con una rama de máscara por instancia y Ro
 ---
 
 ## III. Problema y conjunto de datos
-
-**[BORRADOR — revisión de contenido diferida]**
 
 ### A. Problema de localización y lectura
 
@@ -168,7 +154,7 @@ La inclinación, por su parte, es bimodal. La mediana (~3,5–3,7°) describe lo
 
 En estanterías densas el solape es estructural. El máximo IoU mediano entre AABB vecinos es **0,27**; el **76 %** de las cajas solapa otra con IoU ≥ 0,1 y el **23 %** alcanza IoU ≥ 0,5. Un NMS agresivo en 0,5 puede eliminar verdaderos positivos. Por eso se define el subconjunto *denso* (imagen con al menos un GT cuyo máximo IoU con otro GT ≥ 0,5) y se adopta un NMS más permisivo en detección.
 
-Finalmente, la fuga ocurre por archivo y no por escena original. El split de Roboflow opera a nivel de archivo: de 1.218 fuentes distintas, 104 cruzan particiones, de modo que el **27 %** de validación y el **33 %** de prueba tienen una imagen hermana en entrenamiento. El *mAP* absoluto puede ser optimista frente a estanterías nunca vistas; la comparación relativa entre modelos sobre el **mismo** particionado, en cambio, sigue siendo válida. Este sesgo se declara de forma explícita.
+Finalmente, la fuga ocurre por archivo y no por escena original. El split de Roboflow opera a nivel de archivo: de 1.218 fuentes distintas, 104 cruzan particiones, de modo que el **27 %** de validación y el **33 %** de prueba tienen una imagen hermana en entrenamiento. Declararlo no invalida el experimento: el objetivo no es estimar el rendimiento absoluto sobre estanterías inéditas, sino comparar modelos bajo el mismo particionado. Con ese sesgo compartido, las diferencias de *mAP*, recall y latencia siguen siendo atribuibles a la representación y al entrenamiento; el *mAP* absoluto, en cambio, debe leerse con cautela fuera de este split.
 
 ### E. Implicaciones para el diseño experimental
 
@@ -177,8 +163,6 @@ Esos hallazgos fijan el protocolo que sigue. Se mantiene `imgsz` en al menos 640
 ---
 
 ## IV. Metodología
-
-**[BORRADOR — revisión de contenido diferida]**
 
 ### A. Diseño experimental
 
@@ -194,7 +178,7 @@ La decisión no es una preferencia arbitraria de representación, sino un requis
 
 ### C. Entrenamiento por familia
 
-Todos los experimentos parten de pesos preentrenados en COCO y hacen *fine-tuning* a una clase (*lomo*). La resolución efectiva se mantiene en al menos 640 px (`imgsz` / `min_size`), en línea con el análisis exploratorio. Cuando el marco lo permite se fija semilla 42. El hardware de referencia es Google Colab con GPU Tesla T4.
+Todos los experimentos parten de pesos preentrenados en COCO y hacen *fine-tuning* a una clase (*lomo*). La resolución efectiva se mantiene en al menos 640 px (`imgsz` / `min_size`), en línea con el análisis exploratorio. Cuando el marco lo permite se fija semilla 42. El hardware de referencia es Google Colab con GPU Tesla T4. No se unifican las épocas entre brazos: cada familia elige el mejor *checkpoint* en validación (*mAP* / *fitness*), para no forzar un presupuesto fijo que sobreentrene a unos o truncue prematuramente a otros.
 
 En Ultralytics se entrenan YOLOv8s (AABB), YOLO26s-seg y las variantes OBB sobre el export YOLO nativo (`data.yaml`). Los hiperparámetros típicos de AABB y segmentación son *imgsz* = 640, *batch* = 16, SGD (*lr0* = 0,01, *lrf* = 0,01, *momentum* = 0,937), NMS con *iou* = 0,40 —más permisivo que el valor por defecto ~0,7, motivado por el solape del EDA— y *max_det* = 300. Las corridas de referencia incluyen YOLOv8s-AABB (20 épocas; mejor *checkpoint* en la 19), YOLO26s-seg (hasta 30 épocas con *patience* = 5; mejor época 24 según *mAP* de máscara) y OBB (25 épocas, SGD con *lr0* = 1×10⁻³ y *batch* = 32). El mejor modelo se elige por *fitness* Ultralytics / *mAP@0.5* de la salida principal.
 
@@ -202,19 +186,20 @@ En *torchvision* se entrenan Faster R-CNN y Mask R-CNN con ResNet-50 FPN (varian
 
 ### D. Protocolo de evaluación
 
-Las métricas reportadas son *mAP@0.5*, *mAP@0.5:0.95*, precisión, recall y latencia media (ms/imagen, *batch* = 1 en AABB y segmentación). En AABB y segmentación, al reevaluar el mejor *checkpoint* se fija *conf*/*score* ≥ 0,5 e *IoU* ≥ 0,5. Los *mAP* de caja AABB, OBB y máscara no se agregan en un *ranking* único: se tabulan por tipo de tarea y, de forma complementaria, en un resumen de seis filas con la advertencia de comparabilidad. Las cifras OBB corresponden a la validación Ultralytics del *best.pt* al cierre del entrenamiento; en esta versión aún no incluyen la misma pasada de prueba y subconjuntos que AABB y segmentación, limitación que se declara junto con los resultados.
+Las métricas reportadas son *mAP@0.5*, *mAP@0.5:0.95*, precisión, recall y latencia media (ms/imagen, *batch* = 1 en AABB y segmentación). En AABB y segmentación, al reevaluar el mejor *checkpoint* se fija *conf*/*score* ≥ 0,5 e *IoU* ≥ 0,5. Los *mAP* de caja AABB, OBB y máscara no se agregan en un *ranking* único: se tabulan por tipo de tarea y, de forma complementaria, en un resumen de seis filas con la advertencia de comparabilidad. Las cifras OBB corresponden a la validación Ultralytics del *best.pt* al cierre del entrenamiento; no se completó la misma pasada de prueba y subconjuntos que en AABB y segmentación porque el pipeline de OCR se cerró con YOLO26s-seg, y la homogeneización OBB quedó como trabajo futuro.
 
 ### E. OCR sobre lomos localizados
 
-El flujo de OCR no se alimenta del AABB sin postprocesado. El recorte se obtiene del polígono o de la máscara —o de la caja orientada cuando corresponde—, se alinea el texto por rotación y se preprocesa antes de la lectura con motores de uso práctico (p. ej., EasyOCR o PaddleOCR). Los umbrales de detección se alinean al resto del experimento (*conf* = 0,5, NMS *iou* = 0,40). La experimentación y las conclusiones de OCR se desarrollan en la Sección VII; el emparejamiento fino contra un catálogo queda fuera del cuerpo experimental o se contempla como trabajo futuro (Sección VIII).
+El flujo de OCR no se alimenta del AABB sin postprocesado. El recorte se obtiene del polígono o de la máscara —o de la caja orientada cuando corresponde—, se alinea el texto por rotación y se preprocesa antes de la lectura con motores de uso práctico (EasyOCR y PaddleOCR), en un esquema cercano a pipelines de lomos basados en YOLO y PaddleOCR [2]. Los umbrales de detección se alinean al resto del experimento (*conf* = 0,5, NMS *iou* = 0,40). La experimentación, la comparación entre motores y el indicador de coincidencia contra un catálogo local se desarrollan en la Sección VII; el prototipo de demostración, en la Sección VIII. El matching many-to-many a escala permanece como trabajo futuro (Sección IX).
 
 ---
 
 ## V. Experimentos y resultados
 
-**[BORRADOR — revisión de contenido diferida]**
+*(Nota de borrador: las tablas numéricas canónicas figuran al inicio de este documento. En IEEE: TABLA I = resumen de seis modelos; TABLA II = segmentación val/test/subconjuntos.)*
 
-*(Nota de borrador: las tablas numéricas canónicas figuran al inicio de este documento; en la versión IEEE se insertarán una o dos tablas de detalle junto con el resumen de seis filas.)*
+>>> TABLA I — RESUMEN DE LOS SEIS MODELOS (MÉTRICA PRINCIPAL EN VALIDACIÓN). FUENTE: BLOQUE «TABLA RESUMEN» AL INICIO DE ESTE DOCUMENTO.
+>>> NOTA AL PIE TABLA I: (1) AABB, OBB Y MÁSCARA NO CONSTITUYEN UN RANKING ÚNICO: EL *MAP@0.5* NO ES ESTRICTAMENTE COMPARABLE ENTRE TIPOS DE TAREA. (2) CIFRAS OBB: VALIDACIÓN ULTRALYTICS DEL *BEST.PT*; SIN LA MISMA PASADA DE PRUEBA/SUBCONJUNTOS QUE AABB Y SEGMENTACIÓN PORQUE EL PIPELINE DE OCR SE CERRÓ CON YOLO26S-SEG. (3) LATENCIA OBB: ORDEN DE MAGNITUD DEL LOG ULTRALYTICS (NO EL MISMO SCRIPT *BATCH*=1 DE AABB/SEG).
 
 ### A. Detección AABB
 
@@ -222,63 +207,74 @@ En AABB, YOLOv8s y Faster R-CNN comparten un perfil de alta precisión y recall 
 
 ### B. Detección OBB
 
-Dentro del brazo OBB, y bajo el protocolo Ultralytics al cierre del entrenamiento, YOLO26s-OBB (*mAP@0.5* = 0,848) supera a YOLOv8s-OBB (0,728) y además es más rápido (~18 ms frente a ~31 ms). El *mAP@0.5:0.95* queda por debajo del de AABB (0,53 frente a ~0,60–0,68), resultado esperable al exigir ajuste angular. Estas cifras aún no corresponden a una reevaluación con *conf* ≥ 0,5 ni a prueba/subconjuntos; se interpretan solo dentro del brazo OBB.
+Dentro del brazo OBB, y bajo el protocolo Ultralytics al cierre del entrenamiento, YOLO26s-OBB (*mAP@0.5* = 0,848) supera a YOLOv8s-OBB (0,728) y además es más rápido (~18 ms frente a ~31 ms). El *mAP@0.5:0.95* queda por debajo del de AABB (0,53 frente a ~0,60–0,68), resultado esperable al exigir ajuste angular. Estas cifras no incluyen reevaluación con *conf* ≥ 0,5 ni prueba/subconjuntos —el pipeline de OCR se cerró con YOLO26s-seg—; se interpretan solo dentro del brazo OBB.
 
 ### C. Segmentación de instancias
 
-En máscara, YOLO26s-seg y Mask R-CNN quedan muy próximos en *mAP@0.5* de validación (0,780 frente a 0,785) y en prueba (~0,776 en ambos). Mask R-CNN aporta más recall (0,834) a costa de ~117 ms por imagen; YOLO26s-seg opera cerca de 26 ms. En densos e inclinados el *mAP@0.5* desciende a ~0,58–0,65: Mask conserva mejor recall y YOLO mayor precisión. Cuando se miden ambas salidas, la brecha entre caja y máscara confirma que localizar el AABB no equivale a segmentar el polígono.
+En máscara, YOLO26s-seg y Mask R-CNN quedan muy próximos en *mAP@0.5* de validación (0,780 frente a 0,785) y en prueba (~0,776 en ambos). Mask R-CNN aporta más recall (0,834) a costa de ~117 ms por imagen; YOLO26s-seg opera cerca de 26 ms.
+
+>>> TABLA II — SEGMENTACIÓN DE INSTANCIAS: VALIDACIÓN / PRUEBA / SUBCONJUNTOS DENSO E INCLINADO (YOLO26S-SEG VS MASK R-CNN). FUENTE: BLOQUE «DETALLE SEGMENTACIÓN» AL INICIO DE ESTE DOCUMENTO.
+>>> NOTA AL PIE TABLA II: (1) COLUMNA *MAP* = MÉTRICA DE MÁSCARA (*CONF*/*SCORE* ≥ 0,5, *IOU* ≥ 0,5). (2) *DENSO*: IMAGEN CON AL MENOS UN GT CUYO MÁXIMO IOU AABB CON OTRO GT ≥ 0,5. (3) *INCLINADO*: GT CON INCLINACIÓN > 45°.
+
+En densos e inclinados el *mAP@0.5* desciende a ~0,58–0,65: Mask conserva mejor recall y YOLO mayor precisión. Cuando se miden ambas salidas, la brecha entre caja y máscara confirma que localizar el AABB no equivale a segmentar el polígono.
 
 ### D. Remisión a OCR
 
-Los resultados cuantitativos y las conclusiones del flujo de OCR —localización con YOLO26s-seg, recortes y motores de lectura— se presentan en la Sección VII, una vez cerrada la notebook correspondiente.
+La evaluación del texto recuperado sobre los lomos localizados —con YOLO26s-seg como localizador— se presenta en la Sección VII.
 
 ---
 
 ## VI. Discusión
 
-**[BORRADOR — revisión de contenido diferida]**
-
 Los errores observados encajan con el análisis exploratorio. La ocupación AABB media de ~0,54 anticipa fondo o vecino en el recorte; el solape denso explica caídas de recall bajo NMS; la cola de inclinación justifica el brazo OBB sin transformar el dataset en un conjunto “solo rotado”. En velocidad, las variantes YOLO superan a las R-CNN en un factor aproximado de 5–8×, con *mAP@0.5* comparable por tipo de tarea. Mask R-CNN no aventaja de forma consistente a YOLO26s-seg en *mAP* de máscara global, aunque su mayor recall en densos e inclinados puede preferirse cuando el objetivo es un inventario exhaustivo antes que tiempo real.
 
-Hay, no obstante, límites que condicionan la lectura de las cifras. La fuga del 27–33 % por imagen fuente entre particiones puede volver optimista el *mAP* absoluto, aunque la comparación relativa sobre el mismo split sigue siendo útil. La prueba, con 120 imágenes, introduce variabilidad. El protocolo OBB aún no está homogeneizado con el de AABB y segmentación. Y OCR junto con el emparejamiento de catálogo todavía no alcanzan el mismo nivel de reporte tabular que la detección.
+Hay, no obstante, límites que condicionan la lectura de las cifras. La fuga del 27–33 % por imagen fuente entre particiones puede volver optimista el *mAP* absoluto, aunque la comparación relativa sobre el mismo split sigue siendo útil. La prueba, con 120 imágenes, introduce variabilidad. El protocolo OBB no se homogeneizó con el de AABB y segmentación porque el pipeline de OCR se cerró con YOLO26s-seg. El OCR, por su parte, se evalúa sobre un conjunto reducido de fotos propias (Sección VII) y no sustituye un protocolo de inventario a escala de catálogo [3].
 
-A la luz de ese balance se adopta **YOLO26s-seg** como localizador para el flujo de OCR. La máscara mitiga la holgura del AABB al delimitar el lomo a nivel de píxel y reducir fondo o vecino en el recorte. Su *mAP@0.5* de máscara en validación (0,780) es comparable al de Mask R-CNN (0,785), pero con latencia mucho menor (~26 ms frente a ~117 ms). Frente a los detectores AABB, ofrece un recorte más ajustado sin abandonar el compromiso calidad–velocidad de la familia YOLO. Mask R-CNN puede conservar más recall en cortes difíciles, y YOLO26s-OBB alcanza un *mAP@0.5* elevado bajo su protocolo propio; aun así, YOLO26s-seg concentra en un solo modelo la representación geométrica adecuada para OCR, una calidad de máscara competitiva y una latencia compatible con un pipeline de inventario visual.
+A la luz de ese balance se adopta **YOLO26s-seg** como localizador para el flujo de OCR. La máscara mitiga la holgura del AABB al delimitar el lomo a nivel de píxel [7] y reducir fondo o vecino en el recorte. Su *mAP@0.5* de máscara en validación (0,780) es comparable al de Mask R-CNN (0,785), pero con latencia mucho menor (~26 ms frente a ~117 ms). Frente a los detectores AABB, ofrece un recorte más ajustado sin abandonar el compromiso calidad–velocidad de la familia YOLO. Mask R-CNN puede conservar más recall en cortes difíciles, y YOLO26s-OBB alcanza un *mAP@0.5* elevado bajo su protocolo propio; aun así, YOLO26s-seg concentra en un solo modelo la representación geométrica adecuada para OCR, una calidad de máscara competitiva y una latencia compatible con un pipeline de inventario visual.
 
 ---
 
 ## VII. Experimentación con OCR
 
-**[PENDIENTE — rellenar al cerrar `notebooks/OCR.ipynb`]**
-
-Esta sección cerrará el argumento del artículo: una vez elegido el localizador, resta medir qué tan usable es el recorte para leer texto. La fuente de verdad será `notebooks/OCR.ipynb` y los artefactos asociados (`resultados_ocr/`, `notebooks/data/gt_ocr.csv`, entre otros). Mientras la notebook no se dé por cerrada, no se incorporan cifras ni conclusiones definitivas.
+Una vez elegido YOLO26s-seg como localizador, resta comprobar si el recorte que produce es usable para lectura. El experimento se realiza sobre dos fotografías propias de estantería, fuera de *Book Spine 2*, de modo que el pipeline se pone a prueba en condiciones cercanas al uso previsto.
 
 ### A. Protocolo experimental
 
-*(Pendiente de redacción: fotos propias y GT; localización con YOLO26s-seg; recorte desde máscara; preprocesado; motores EasyOCR y PaddleOCR; métricas de lectura o similitud.)*
+Sobre cada imagen se corre el *checkpoint* de YOLO26s-seg con los mismos umbrales del resto del trabajo (*conf* = 0,5, NMS *iou* = 0,40). De cada máscara se obtiene un recorte alineado al eje del lomo —no el AABB sin postprocesado— y se aplica un preprocesado ligero antes de la lectura. Sobre esos recortes se evalúan dos motores de OCR de uso práctico, EasyOCR (español e inglés) y PaddleOCR (español), midiendo texto recuperado, confianza y latencia por instancia. La inclusión de PaddleOCR permite contrastar, en un escenario acotado, un motor ya empleado en pipelines de lomos [2] frente a una alternativa de uso frecuente.
+
+Como indicador de utilidad para inventario, cada lectura se compara de forma difusa contra un catálogo local de títulos mediante *token set ratio* (RapidFuzz). Se declara coincidencia cuando el puntaje alcanza un umbral de 85/100. El emparejamiento no pretende resolver el matching many-to-many de colecciones a gran escala [3]: solo mide si lo leído se acerca lo suficiente a un título real como para identificarlo.
 
 ### B. Resultados
 
-*(Pendiente de redacción: tablas y observaciones cuantitativas y cualitativas.)*
+La detección produjo **19** recortes (5 en la primera foto y 14 en la segunda). PaddleOCR supera con claridad a EasyOCR en las tres dimensiones observadas. Su confianza media es 0,95 frente a 0,57; la latencia mediana por recorte es del orden de 0,6 s frente a ~38 s; y, en el matching contra catálogo, recupera **8/19** coincidencias (42,1 %) frente a **3/19** (15,8 %).
+
+Los fallos residuales se concentran donde el recorte sigue siendo difícil de leer: lomos muy densos, tipografías pequeñas o interferencia de vecinos. En esos casos ninguno de los dos motores alcanza el umbral, lo que refuerza que la calidad del recorte condiciona al OCR tanto como la elección del motor.
 
 ### C. Conclusiones de OCR
 
-*(Pendiente de redacción: síntesis de hallazgos del brazo OCR y su vínculo con la calidad del recorte.)*
+En este escenario acotado, el pipeline YOLO26s-seg → recorte por máscara → PaddleOCR es el más consistente: mejor texto, mayor tasa de identificación en catálogo y latencia compatible con un uso interactivo. EasyOCR, con los mismos recortes, degrada tanto la legibilidad como el tiempo de respuesta. El resultado confirma la premisa del EDA y de la Sección VI: un localizador que reduzca holgura ayuda al OCR, pero no lo vuelve trivial; densos e inclinados siguen limitando la lectura. Ampliar el experimento a más fotos y a un matching de catálogo más robusto queda como trabajo futuro.
 
 ---
 
-## VIII. Conclusiones y trabajo futuro
+## VIII. Prototipo de demostración
 
-**[BORRADOR — revisión de contenido diferida]**
+Con esos resultados se implementó un prototipo del pipeline completo, pensado como demostración del trabajo y no como producto final. El flujo integra **YOLO26s-seg** para localizar lomos y **PaddleOCR** para leer el texto de cada recorte alineado, de modo que una fotografía de estantería pueda recorrerse extremo a extremo: detección, segmentación, recorte y lectura, con contraste opcional contra un catálogo local. La composición es deliberadamente próxima a pipelines de detección más OCR sobre lomos [2], aunque aquí el énfasis está en la demostración de las decisiones experimentales propias y no en proponer una arquitectura nueva.
 
-Sobre *Book Spine 2* v4 se compararon seis modelos en AABB, OBB y máscara de instancia, junto con un flujo de OCR sensible a la calidad del recorte (Sección VII). No hay un único modelo óptimo para todos los criterios. Las variantes YOLO ofrecen el mejor compromiso entre calidad y latencia; OBB y máscaras responden al diagnóstico geométrico del análisis exploratorio cuando el AABB holgado degrada el recorte; densos e inclinados siguen siendo el principal punto débil en recall.
+El prototipo sirve para exhibir, en condiciones controladas, la elección del localizador y del motor de OCR, y para inspeccionar de forma cualitativa dónde el flujo acierta o falla (densidad, inclinación, tipografía). Su alcance es demostrativo: valida la viabilidad del pipeline elegido y facilita la comunicación de resultados, sin pretender cerrar el problema de inventario a escala [3].
 
-Como trabajo futuro conviene homogeneizar la evaluación OBB —prueba y subconjuntos bajo el mismo umbral—, ampliar la cuantificación de OCR según el tipo de localizador, explorar NMS y umbrales adaptados a la densidad y, si se incorpora emparejamiento de catálogo, tratarlo como etapa independiente del *mAP* de detección [3].
+---
+
+## IX. Conclusiones y trabajo futuro
+
+Este trabajo partió de un diagnóstico geométrico de *Book Spine 2* v4 —AABB holgados, estantes densos e inclinación bimodal— y evaluó seis modelos en AABB, OBB y máscara de instancia bajo un protocolo común por tipo de tarea. No emerge un ganador absoluto: las variantes YOLO concentran el mejor compromiso entre calidad y latencia; OBB y máscaras responden de forma distinta al mismo problema de holgura; y densos e inclinados permanecen como el principal punto débil en recall.
+
+Ese balance justifica adoptar **YOLO26s-seg** como localizador para lectura: máscara competitiva frente a Mask R-CNN con una fracción de su costo temporal, y un recorte más útil para OCR que el AABB crudo. Sobre fotos propias, **PaddleOCR** superó a EasyOCR en confianza, latencia e identificación difusa contra un catálogo local, sin eliminar los fallos ligados a densidad y tipografía. Con ese pipeline se implementó además un **prototipo de demostración** extremo a extremo, suficiente para validar la viabilidad del flujo y comunicar los hallazgos, aunque lejos aún de un sistema de inventario a escala.
+
+Como trabajo futuro se propone, en primer lugar, homogeneizar la evaluación OBB con el mismo protocolo de prueba y subconjuntos usado en AABB y segmentación. En segundo lugar, ampliar el experimento de OCR a más imágenes y condiciones de captura, y madurar el prototipo —umbrales, NMS adaptativo a densidad y robustez del recorte— hacia un uso menos controlado. Por último, si el objetivo pasa del indicador local de coincidencia al inventario real, el matching many-to-many contra catálogos grandes debe tratarse como etapa propia, independiente del *mAP* de detección [3].
 
 ---
 
 ## Referencias
-
-*(Lista alineada a `carpeta-referencias/papers/`; se irá citando el resto del artículo con estos números.)*
 
 [1] H. Ma, C. Wang, A. Li, A. Xu y D. Han, “An Accurate Book Spine Detection Network Based on Improved Oriented R-CNN,” *Sensors*, vol. 24, no. 24, art. 7996, 2024, doi: 10.3390/s24247996.
 

@@ -45,7 +45,14 @@ class ModelSpec:
 MODELS = (
     ModelSpec("YOLOv8 AABB", "yolo", ROOT / "results/checkpoints/yolov8/mejor_map50.pt", "DEMO_YOLOV8_WEIGHTS", (28, 160, 204)),
     ModelSpec("Faster R-CNN", "faster_rcnn", ROOT / "results/checkpoints/faster_rcnn/mejor_map50.pt", "DEMO_FASTER_RCNN_WEIGHTS", (236, 129, 44)),
-    ModelSpec("YOLO26 segmentación", "yolo_seg", ROOT / "results/checkpoints/yolo26s_seg/mejor_map50.pt", "DEMO_YOLO26_SEG_WEIGHTS", (109, 179, 95)),
+    ModelSpec(
+        "YOLO26 segmentación",
+        "yolo_seg",
+        ROOT / "results/checkpoints/yolo26s_seg/mejor_map50.pt",
+        "DEMO_YOLO26_SEG_WEIGHTS",
+        (109, 179, 95),
+        ROOT / "pesos/yolo26s_seg/mejor_map50.pt",
+    ),
     ModelSpec(
         "Mask R-CNN",
         "mask_rcnn",
@@ -65,6 +72,8 @@ class Prediction:
     mean_score: float | None = None
     elapsed_ms: float | None = None
     message: str = ""
+    polygons: list[list[list[float]]] | None = None
+    scores: list[float] | None = None
 
 
 def selected_paths(overrides: Sequence[str] | None = None) -> list[Path]:
@@ -192,7 +201,8 @@ def predict_one(image: Image.Image, spec: ModelSpec, confidence: float, device: 
             elapsed_ms = (perf_counter() - start) * 1000
             boxes = result.boxes.xyxy.cpu().tolist()
             scores = result.boxes.conf.cpu().tolist()
-            polygons = result.masks.xy if spec.kind == "yolo_seg" and result.masks is not None else None
+            polygons = (result.masks.xy
+                        if spec.kind == "yolo_seg" and result.masks is not None else None)
         else:
             import torch
             from torchvision.transforms.functional import to_tensor
@@ -214,8 +224,18 @@ def predict_one(image: Image.Image, spec: ModelSpec, confidence: float, device: 
                 masks = (result["masks"][keep, 0] >= 0.5).cpu().numpy()
 
         rendered = _draw(image, boxes, scores, spec.color, polygons, masks)
-        return Prediction(spec, rendered, len(scores), sum(scores) / len(scores) if scores else None,
-                          elapsed_ms, "OK")
+        serializable_polygons = ([np.asarray(polygon).tolist() for polygon in polygons]
+                                 if polygons is not None else None)
+        return Prediction(
+            spec,
+            rendered,
+            len(scores),
+            sum(scores) / len(scores) if scores else None,
+            elapsed_ms,
+            "OK",
+            serializable_polygons,
+            [float(score) for score in scores],
+        )
     except Exception as exc:
         return Prediction(spec, None, message=f"Error al ejecutar {spec.name}: {type(exc).__name__}: {exc}")
 

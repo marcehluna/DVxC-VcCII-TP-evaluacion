@@ -14,7 +14,7 @@ Repo del TP de evaluación de Visión por Computadora II (CEIA).
 | `src/` | Scripts de train / eval / OCR / matching |
 | `notebooks/` | Experimentos Colab |
 | `results/` | Tablas, figuras y predicciones |
-| `demo/` | Front local para comparar modelos y `catalog.csv` |
+| `demo/` | Front local del pipeline YOLO26s-seg → OCR → catálogo |
 | `docs/` | Notas de experimento |
 | `carpeta-referencias/` | Pautas, papers y template IEEE |
 
@@ -36,11 +36,11 @@ python -m venv .venv
 ./.venv/bin/python -m pip install -r requirements.txt
 ```
 
-Si ya existe `.venv` y no tiene `pip` (por ejemplo, si se creó con `uv`), instalá con `uv pip install --python .venv\Scripts\python.exe -r requirements.txt` en Windows o `uv pip install --python .venv/bin/python -r requirements.txt` en Linux/macOS. Si el entorno ya tiene las dependencias, no hace falta reinstalarlas.
+Si ya existe `.venv` y no tiene `pip` (por ejemplo, si se creó con `uv`), instalá con `uv pip install --link-mode copy --python .venv\Scripts\python.exe -r requirements.txt` en Windows o `uv pip install --python .venv/bin/python -r requirements.txt` en Linux/macOS. El modo `copy` evita errores de hardlinks cuando el repo está dentro de OneDrive. Si el entorno ya tiene las dependencias, no hace falta reinstalarlas.
 
 Dataset: ver [`data/README.md`](data/README.md). Alcance: [`concepto/definicion.md`](concepto/definicion.md). Plan: [`concepto/Plan.md`](concepto/Plan.md).
 
-## Demo: comparar modelos entrenados
+## Demo: inventario visual de biblioteca
 
 La interfaz local usa **Gradio**. Para levantar el front desde la raíz del repo:
 
@@ -60,36 +60,21 @@ Abrí la dirección que imprime la terminal (normalmente `http://127.0.0.1:7860`
 
 ### Cómo usarla
 
-1. Consultá **Métricas registradas — antes de ejecutar**. Elegí **Validación** o **Test**, y **Cajas** o **Máscaras** para ver mAP, precisión, recall y latencia de las corridas documentadas. Esta sección funciona sin cargar pesos. El botón **Actualizar métricas desde los informes** vuelve a leer los archivos locales.
-2. Revisá el aviso de checkpoints. Los pesos no se versionan: copiá los archivos `.pt` a las rutas de la tabla de abajo o abrí **Rutas de checkpoints (editables)**. Se aceptan rutas absolutas, rutas relativas a la raíz del repo y rutas entre comillas copiadas desde Windows.
-3. Si agregaste o moviste pesos con la app abierta, pulsá **Actualizar rutas y comprobar pesos**. No hace falta reiniciar. El aviso comprueba que el archivo exista; la compatibilidad del checkpoint se verifica al ejecutarlo.
-4. En **Modelos a ejecutar**, marcá uno para una prueba individual o varios para comparar. Al abrir la app se seleccionan los archivos disponibles. Los botones **Seleccionar disponibles** y **Seleccionar todos** facilitan cambiar la selección; actualizar rutas no modifica tu elección. Los modelos desmarcados no se cargan ni se ejecutan.
-5. Subí una foto de estantería (hasta 20 MB), pegá una imagen, usá la cámara o elegí un ejemplo de validación. Los ejemplos solo aparecen si existe `dataset/valid/images`.
-6. Ajustá **Confianza mínima** (valor inicial: `0.50`) y pulsá **Ejecutar selección**. El botón se habilita cuando termina de cargarse la imagen y hay al menos un modelo elegido. La app usa las rutas actuales de los campos. Los modelos elegidos se ejecutan secuencialmente y sus resultados aparecen a medida que terminan. CUDA se usa si está disponible; en caso contrario, CPU.
-7. Compará las imágenes en la galería, que permite ampliarlas y descargarlas, y la tabla **Resumen**: número de lomos, confianza media, tiempo local y estado de cada modelo. YOLOv8 AABB y Faster R-CNN muestran cajas; YOLO26 segmentación y Mask R-CNN muestran máscaras y cajas. Si un modelo falla o le faltan pesos, muestra su error y continúan los demás.
+1. Revisá la ficha de **YOLO26s-seg**, elegido por su balance entre calidad de máscara, velocidad y utilidad del recorte para OCR. La comparación contra Mask R-CNN queda disponible como evidencia secundaria.
+2. Subí una foto de estantería (hasta 20 MB), pegá una imagen, usá la cámara o elegí un ejemplo de validación.
+3. Ajustá **Confianza mínima** (valor inicial: `0.50`) y el máximo de lomos que querés leer con OCR. Pulsá **Analizar estante**.
+4. Revisá las máscaras y, a medida que termina cada recorte, la sección **OCR en vivo**. Allí aparecen el texto, la confianza, la rotación elegida y la coincidencia contra el catálogo.
+5. Consultá **Evidencia OCR** para contrastar la nueva ejecución con los 19 recortes previamente procesados por la notebook.
 
-Cambiar la imagen, la confianza, la selección o las rutas limpia los resultados anteriores y cancela la publicación de resultados de esa ejecución. Una inferencia ya iniciada puede tardar en terminar. Ejecutá nuevamente para obtener resultados con la nueva configuración. La primera carga de un modelo puede demorar más; los pesos se conservan en memoria para las siguientes ejecuciones.
+La app busca YOLO26 primero en `results/checkpoints/yolo26s_seg/mejor_map50.pt` y, como ruta alternativa, en `pesos/yolo26s_seg/mejor_map50.pt`. También admite `DEMO_YOLO26_SEG_WEIGHTS` o una ruta editada desde la interfaz.
 
-### Cómo interpretar las métricas
+### OCR y catálogo
 
-- La tabla histórica cita su fuente en cada fila: `entrenamientos/*.md` para YOLOv8, Faster R-CNN y YOLO26; `results/tables/mask_rcnn_resumen_*.json` para Mask R-CNN. Si una fuente falta o no se puede leer, la app lo informa sin impedir el uso de los modelos.
-- Las métricas corresponden al dataset **Book Spine 2 v4** y a los checkpoints documentados. Cambiar la ruta de un modelo no recalcula la tabla histórica. Los protocolos pueden diferir entre informes; consultá la fuente antes de comparar.
-- Cajas y máscaras se consultan por separado. `—` significa que no hay un dato disponible: por ejemplo, las tablas globales de YOLO26 no informan precisión y recall de máscara. Los valores entre 0 y 1 se conservan como proporciones; `~` indica una latencia aproximada.
-- El tiempo local de una ejecución no incluye la carga de pesos ni el dibujo, puede incluir preparación inicial y depende del hardware y del modelo. No reemplaza las latencias de las corridas en Tesla T4 ni constituye un benchmark uniforme entre arquitecturas.
-- La confianza media de una foto no es una medida de exactitud. Una imagen nueva sin etiquetas no permite calcular mAP, precisión o recall.
+La demo ejecuta en vivo YOLO26s-seg → recorte orientado → CLAHE → PaddleOCR → matching con RapidFuzz. La implementación reutilizable está en `demo/ocr.py`; `notebooks/OCR.ipynb` no se modifica ni se importa. Como en el experimento, cada recorte se prueba en 0°/90°/270° y se conserva la lectura de mayor confianza. Los modelos móviles `PP-OCRv3_mobile_det` y `latin_PP-OCRv3_mobile_rec`, seleccionados por PaddleOCR para español en la notebook, se descargan en `.cache/paddlex/` durante la primera ejecución y se conservan para las siguientes.
 
-La app busca los checkpoints documentados en:
+Como referencia experimental, la notebook procesó 19 recortes de las dos fotos de `fotos_propias/`. PaddleOCR obtuvo una confianza media de `0.949`, una latencia media registrada de `649 ms` y 8 coincidencias sobre 19 con umbral de similitud 85 contra los 29 títulos de `catalogo/catalogo.xlsx`.
 
-| Modelo | Ruta |
-| :--- | :--- |
-| YOLOv8 AABB | `results/checkpoints/yolov8/mejor_map50.pt` |
-| Faster R-CNN | `results/checkpoints/faster_rcnn/mejor_map50.pt` |
-| YOLO26 segmentación | `results/checkpoints/yolo26s_seg/mejor_map50.pt` |
-| Mask R-CNN | `results/checkpoints/mask_rcnn/mejor_mask_map50.pt` |
-
-Si falta la ruta principal de Mask R-CNN, la app también busca `results/checkpoints/faster_rcnn/mejor_mask_map50.pt` para admitir el checkpoint ya generado. Como valores iniciales alternativos se admiten las variables de entorno `DEMO_YOLOV8_WEIGHTS`, `DEMO_FASTER_RCNN_WEIGHTS`, `DEMO_YOLO26_SEG_WEIGHTS` y `DEMO_MASK_RCNN_WEIGHTS`. Para Faster R-CNN y Mask R-CNN usá checkpoints con la clave `modelo` y la arquitectura correspondiente. Los checkpoints deben provenir de una fuente confiable.
-
-OCR y matching del catálogo todavía son etapas pendientes en `src/`; esta demo compara visualmente los modelos disponibles. Los tiempos medidos localmente dependen del hardware y no sustituyen las métricas de validación de `entrenamientos/`.
+Los CSV de `resultados_ocr/` alimentan solamente la sección de evidencia histórica; la tabla **OCR en vivo** se calcula desde la fotografía recién cargada.
 
 ### Testing del front
 
@@ -109,7 +94,7 @@ $env:DEMO_TEST_REAL = '1'
 Remove-Item Env:DEMO_TEST_REAL
 ```
 
-La prueba de navegador requiere **Microsoft Edge**, el paquete opcional **Playwright**, el checkpoint de Mask R-CNN y las imágenes de validación:
+La prueba de navegador requiere **Microsoft Edge**, el paquete opcional **Playwright**, el checkpoint de YOLO26s-seg y las imágenes de validación:
 
 ```powershell
 uv pip install --python .venv\Scripts\python.exe playwright
@@ -118,6 +103,6 @@ $env:DEMO_TEST_BROWSER = '1'
 Remove-Item Env:DEMO_TEST_BROWSER
 ```
 
-Esta prueba abre Edge sin ventana, consulta métricas, ejecuta Mask R-CNN, comprueba un peso faltante, verifica que la miniatura entre completa en la galería y revisa el contraste del aviso en tema oscuro. Guarda capturas en `.test-artifacts/` (no se versionan). Si usás `pip`, podés instalar Playwright con `.\.venv\Scripts\python.exe -m pip install playwright`.
+Esta prueba abre Edge sin ventana, consulta las métricas y la evidencia OCR, ejecuta YOLO26s-seg más un recorte OCR real, comprueba un peso faltante, verifica las galerías y revisa el contraste del aviso en tema oscuro. Guarda capturas en `.test-artifacts/` (no se versionan). Si usás `pip`, podés instalar Playwright con `.\.venv\Scripts\python.exe -m pip install playwright`.
 
-Verificación local del 28/09/2026: **13 pruebas de lógica aprobadas** y **1 prueba de navegador aprobada**, incluyendo una inferencia real de Mask R-CNN, actualización de métricas, selección individual, limpieza de resultados, manejo de pesos faltantes y contraste en modo oscuro. Las inferencias reales de YOLOv8, Faster R-CNN y YOLO26 quedan pendientes de disponer de sus checkpoints locales. Las dependencias emitieron avisos de deprecación de Gradio/pandas y avisos de recursos de asyncio; no impidieron completar las pruebas.
+Verificación local del 09/10/2026: pruebas de lógica aprobadas y recorrido de navegador validado con inferencia real de YOLO26s-seg, evidencia OCR, limpieza de resultados, manejo de pesos faltantes y contraste en modo oscuro. Las dependencias pueden emitir avisos de deprecación de Gradio/pandas y de recursos de asyncio; no impiden completar las pruebas.

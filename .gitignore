@@ -35,3 +35,4 @@ Book_spine_2-4/
 .ipynb_checkpoints/
 .DS_Store
 .test-artifacts/
+.cache/

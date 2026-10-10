@@ -10,7 +10,8 @@ from unittest.mock import patch
 from PIL import Image
 
 from demo import inference
-from demo.app import checkpoint_status, choose_available, clear_results, inputs_changed, run_comparison
+from demo.app import (checkpoint_status, choose_available, clear_results, inputs_changed,
+                      ocr_experiment, primary_checkpoint_status, run_comparison)
 from demo.metrics import metric_rows
 
 
@@ -94,6 +95,31 @@ class DemoTests(unittest.TestCase):
         self.assertFalse(inputs_changed(None, ["Mask R-CNN"])[-1].interactive)
         self.assertFalse(inputs_changed(self.image, [])[-1].interactive)
         self.assertTrue(inputs_changed(self.image, ["Mask R-CNN"])[-1].interactive)
+
+    def test_primary_status_uses_yolo26_checkpoint(self):
+        self.assertIn("Falta el checkpoint de YOLO26", primary_checkpoint_status(self.paths[2]))
+        Path(self.paths[2]).touch()
+        self.assertIn("YOLO26 listo", primary_checkpoint_status(self.paths[2]))
+
+    def test_ocr_artifacts_are_summarized(self):
+        output = self.root / "resultados_ocr"
+        crops = output / "recortes"
+        crops.mkdir(parents=True)
+        (output / "comparativa_ocr.csv").write_text(
+            "crop_id,paddleocr_confianza,paddleocr_latencia_ms\n"
+            "book_001,0.9,500\nbook_002,1.0,700\n", encoding="utf-8")
+        (output / "comparativa_catalogo.csv").write_text(
+            "crop_id,paddleocr_texto,paddleocr_match_titulo,paddleocr_match_score,paddleocr_coincide\n"
+            "book_001,texto,EL PRINCIPITO,90,True\n"
+            "book_002,otro,SIN MATCH,20,False\n", encoding="utf-8")
+        (crops / "book_001.jpg").touch()
+
+        rows, stats, gallery = ocr_experiment(self.root)
+
+        self.assertEqual(stats, {"crops": "2", "confidence": "0.950", "matches": "1/2",
+                                 "latency": "600 ms"})
+        self.assertEqual(rows[0][-1], "90.0%")
+        self.assertEqual(len(gallery), 1)
 
 
 class MetricsTests(unittest.TestCase):

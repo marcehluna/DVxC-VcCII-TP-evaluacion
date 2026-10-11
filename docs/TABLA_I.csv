@@ -1,0 +1,7 @@
+Modelo,Tarea,mAP@0.5,mAP@0.5:0.95,Precision,Recall,Latencia_ms_por_imagen,Observacion
+YOLOv8s,AABB (caja),0.822,0.676,0.976,0.823,~14,Mejor checkpoint época 19
+Faster R-CNN,AABB (caja),0.799,0.603,0.965,0.791,~119,Mejor checkpoint época 6 (corrida 30 ép.)
+YOLOv8s-OBB,OBB (caja orientada),0.728,0.351,0.759,0.677,~31,Ultralytics val best.pt; 25 ép.
+YOLO26s-OBB,OBB (caja orientada),0.848,0.532,0.835,0.761,~18,Ultralytics val best.pt; 25 ép.
+YOLO26s-seg,Máscara,0.780,0.562,,,~26,Mejor checkpoint época 24 (corrida 30 ép.)
+Mask R-CNN,Máscara,0.785,0.507,0.785,0.834,~117,Mejor checkpoint época 12

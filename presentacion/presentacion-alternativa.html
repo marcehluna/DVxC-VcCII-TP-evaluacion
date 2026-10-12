@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inventario visual de bibliotecas · con demo</title>
+<style>
+  @font-face {
+    font-family: "Aptos";
+    src: local("Aptos"), local("Aptos Regular");
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Aptos";
+    src: local("Aptos Bold");
+    font-weight: 700;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Aptos Display";
+    src: local("Aptos Display"), local("Aptos Display Bold"), local("Aptos Bold");
+    font-weight: 700;
+    font-style: normal;
+  }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #111410;
+    overflow: hidden;
+    font-family: "Aptos", "Segoe UI", "Helvetica Neue", sans-serif;
+  }
+  #scaler {
+    width: 1920px;
+    height: 1080px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: top left;
+  }
+  .slide {
+    width: 1920px;
+    height: 1080px;
+    position: absolute;
+    inset: 0;
+    display: none;
+    overflow: hidden;
+  }
+  .slide.active { display: block; }
+  .shape {
+    position: absolute;
+    box-sizing: border-box;
+  }
+  .shape svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .txt {
+    width: 100%;
+    height: 100%;
+  }
+  .txt p {
+    line-height: 1.15;
+    white-space: pre-wrap;
+  }
+  .nav {
+    position: fixed;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity .2s ease;
+  }
+  body:hover .nav, .nav:focus-within { opacity: 1; }
+  .nav button {
+    appearance: none;
+    border: 0;
+    background: rgba(23, 59, 50, .88);
+    color: #fffdf8;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .nav button:focus-visible { outline: 2px solid #dbae56; }
+
+  .slide-video .video-frame {
+    position: absolute;
+    left: 96px;
+    top: 280px;
+    width: 1728px;
+    height: 700px;
+    background: #0F241F;
+    border: 2px solid #DED8CE;
+    border-radius: 28px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .slide-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #0F241F;
+    display: block;
+  }
+  .nav .count {
+    color: #fffdf8;
+    font-size: 13px;
+    letter-spacing: .04em;
+    min-width: 48px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+</head>
+<body>
+<div id="scaler">
+<section class="slide" id="s1" style="background:#173B32" aria-label="Diapositiva 1">
+<div class="shape pic" style="left:1087.2px;top:0.0px;width:832.32px;height:1080.0px;overflow:hidden"><img src="assets/estante.jpg" alt="" style="position:absolute;left:-303.84px;top:-0.00px;width:1440.00px;height:1080.00px"></div>
+<div class="shape" style="left:1064.16px;top:0.0px;width:25.92px;height:1080.0px;background:#DBAE56"></div>
+<div class="shape" style="left:93.6px;top:54.72px;width:57.6px;height:57.6px;background:#FFFDF8"></div>
+<div class="shape" style="left:105.12px;top:64.8px;width:7.2px;height:37.44px;background:#DBAE56"></div>
+<div class="shape" style="left:118.08px;top:64.8px;width:21.6px;height:37.44px;background:#C45D3D"></div>
+<div class="shape text" style="left:103.68px;top:218.88px;width:856.8px;height:43.62px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36.0px;font-weight:700;font-style:normal;color:#DBAE56">TRABAJO FINAL · VISIÓN POR COMPUTADORA II</span></p></div></div>
+<div class="shape text" style="left:103.68px;top:275.04px;width:871.2px;height:187.2px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:68.0px;font-weight:700;font-style:normal;color:#FFFDF8">Inventario visual
+de bibliotecas</span></p></div></div>
+<div class="shape text" style="left:108.0px;top:501.12px;width:842.4px;height:100.8px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:400;font-style:normal;color:#DCE9DF">Segmentación</span><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:400;font-style:normal;color:#DCE9DF"> de </span><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:400;font-style:normal;color:#DCE9DF">lomos</span><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:400;font-style:normal;color:#DCE9DF"> con YOLO26s-seg, OCR y </span><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:400;font-style:normal;color:#DCE9DF">vinculación</span><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:400;font-style:normal;color:#DCE9DF"> con </span><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:400;font-style:normal;color:#DCE9DF">catálogo</span><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:400;font-style:normal;color:#DCE9DF">.</span></p></div></div>
+<div class="shape text" style="left:108.0px;top:672.48px;width:376.0px;height:43.62px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36.0px;font-weight:700;font-style:normal;color:#DBAE56">INTEGRANTES</span></p></div></div>
+<div class="shape text" style="left:108.0px;top:717.12px;width:856.8px;height:96.94px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:40.0px;font-weight:700;font-style:normal;color:#FFFDF8">Marcelo Luna  ·  Facundo Silberstein  ·  Francisco Meaca  ·  Ian Sztenberg</span></p></div></div>
+<div class="shape text" style="left:108.0px;top:982.08px;width:288.0px;height:28.8px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17.0px;font-weight:700;font-style:normal;color:#DCE9DF">CEIA · 2026</span></p></div></div>
+</section>
+<section class="slide" id="s2" style="background:#F4EFE6" aria-label="Diapositiva 2">
+<div class="shape text" style="left:96.48px;top:57.6px;width:604.8px;height:28.8px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17.0px;font-weight:700;font-style:normal;color:#C45D3D">01 · ARQUITECTURA</span></p></div></div>
+<div class="shape text" style="left:96.48px;top:109.44px;width:1684.8px;height:77.76px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:54.0px;font-weight:700;font-style:normal;color:#173B32">De una foto a un título verificable</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:197.28px;width:1634.4px;height:51.84px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21.0px;font-weight:400;font-style:normal;color:#67736E">YOLO26 produce el recorte geométrico que necesita el OCR; cada etapa conserva evidencia revisable.</span></p></div></div>
+<div class="shape text" style="left:1753.92px;top:61.92px;width:64.8px;height:25.92px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17.0px;font-weight:700;font-style:normal;color:#78A086">02</span></p></div></div>
+<div class="shape" style="left:96.48px;top:263.52px;width:1728.0px;height:2.16px;background:#DED8CE"></div>
+<div class="shape" style="left:96.48px;top:365.76px;width:299.52px;height:354.24px;background:#FFFDF8;border:2.0px solid #DED8CE;border-radius:49.92px"></div>
+<div class="shape" style="left:122.4px;top:396.0px;width:67.68px;height:67.68px;background:#DBAE56;border-radius:11.28px"></div>
+<div class="shape text" style="left:122.4px;top:414.72px;width:67.68px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#FFFDF8">01</span></p></div></div>
+<div class="shape text" style="left:123.84px;top:499.68px;width:243.36px;height:46.08px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:700;font-style:normal;color:#173B32">Imagen</span></p></div></div>
+<div class="shape text" style="left:125.28px;top:581.76px;width:239.04px;height:79.2px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:18.38px;font-weight:700;font-style:normal;color:#67736E">Foto del estante</span></p></div></div>
+<div class="shape" style="left:403.2px;top:511.2px;width:40.32px;height:61.92px;background:transparent"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,0 50,0 100,50 50,100 0,100 50,50" fill="#C45D3D"/></svg></div>
+<div class="shape" style="left:449.28px;top:365.76px;width:299.52px;height:354.24px;background:#FFFDF8;border:2.0px solid #DED8CE;border-radius:49.92px"></div>
+<div class="shape" style="left:475.2px;top:396.0px;width:67.68px;height:67.68px;background:#78A086;border-radius:11.28px"></div>
+<div class="shape text" style="left:475.2px;top:414.72px;width:67.68px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#FFFDF8">02</span></p></div></div>
+<div class="shape text" style="left:476.64px;top:499.68px;width:243.36px;height:46.08px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:700;font-style:normal;color:#173B32">Segmentar</span></p></div></div>
+<div class="shape text" style="left:478.08px;top:581.76px;width:239.04px;height:79.2px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:18.38px;font-weight:700;font-style:normal;color:#67736E">YOLO26s-seg
+imgsz 640</span></p></div></div>
+<div class="shape" style="left:756.0px;top:511.2px;width:40.32px;height:61.92px;background:transparent"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,0 50,0 100,50 50,100 0,100 50,50" fill="#C45D3D"/></svg></div>
+<div class="shape" style="left:802.08px;top:365.76px;width:299.52px;height:354.24px;background:#FFFDF8;border:2.0px solid #DED8CE;border-radius:49.92px"></div>
+<div class="shape" style="left:828.0px;top:396.0px;width:67.68px;height:67.68px;background:#C45D3D;border-radius:11.28px"></div>
+<div class="shape text" style="left:828.0px;top:414.72px;width:67.68px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#FFFDF8">03</span></p></div></div>
+<div class="shape text" style="left:829.44px;top:499.68px;width:243.36px;height:46.08px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:700;font-style:normal;color:#173B32">Enderezar</span></p></div></div>
+<div class="shape text" style="left:830.88px;top:581.76px;width:239.04px;height:79.2px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:18.38px;font-weight:700;font-style:normal;color:#67736E">Máscara +
+minAreaRect</span></p></div></div>
+<div class="shape" style="left:1108.8px;top:511.2px;width:40.32px;height:61.92px;background:transparent"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,0 50,0 100,50 50,100 0,100 50,50" fill="#C45D3D"/></svg></div>
+<div class="shape" style="left:1154.88px;top:365.76px;width:299.52px;height:354.24px;background:#FFFDF8;border:2.0px solid #DED8CE;border-radius:49.92px"></div>
+<div class="shape" style="left:1180.8px;top:396.0px;width:67.68px;height:67.68px;background:#78A086;border-radius:11.28px"></div>
+<div class="shape text" style="left:1180.8px;top:414.72px;width:67.68px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#FFFDF8">04</span></p></div></div>
+<div class="shape text" style="left:1182.24px;top:499.68px;width:243.36px;height:46.08px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:700;font-style:normal;color:#173B32">Leer</span></p></div></div>
+<div class="shape text" style="left:1183.68px;top:581.76px;width:239.04px;height:79.2px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:18.38px;font-weight:700;font-style:normal;color:#67736E">PP-OCRv3
+0° / 90° / 270°</span></p></div></div>
+<div class="shape" style="left:1461.6px;top:511.2px;width:40.32px;height:61.92px;background:transparent"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,0 50,0 100,50 50,100 0,100 50,50" fill="#C45D3D"/></svg></div>
+<div class="shape" style="left:1507.68px;top:365.76px;width:299.52px;height:354.24px;background:#FFFDF8;border:2.0px solid #DED8CE;border-radius:49.92px"></div>
+<div class="shape" style="left:1533.6px;top:396.0px;width:67.68px;height:67.68px;background:#DBAE56;border-radius:11.28px"></div>
+<div class="shape text" style="left:1533.6px;top:414.72px;width:67.68px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#FFFDF8">05</span></p></div></div>
+<div class="shape text" style="left:1535.04px;top:499.68px;width:243.36px;height:46.08px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:700;font-style:normal;color:#173B32">Vincular</span></p></div></div>
+<div class="shape text" style="left:1536.48px;top:581.76px;width:239.04px;height:79.2px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:18.38px;font-weight:700;font-style:normal;color:#67736E">RapidFuzz
+umbral 85</span></p></div></div>
+<div class="shape" style="left:96.48px;top:780.48px;width:1728.0px;height:165.6px;background:#173B32;border-radius:27.6px"></div>
+<div class="shape text" style="left:141.12px;top:817.92px;width:296.64px;height:43.2px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36.0px;font-weight:700;font-style:normal;color:#FFFDF8">YOLO26s-seg</span></p></div></div>
+<div class="shape text" style="left:482.4px;top:812.16px;width:237.6px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:16.0px;font-weight:700;font-style:normal;color:#DBAE56">10,4 M parámetros</span></p></div></div>
+<div class="shape text" style="left:482.4px;top:853.92px;width:237.6px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:700;font-style:normal;color:#FFFDF8">una clase: lomo</span></p></div></div>
+<div class="shape text" style="left:780.48px;top:812.16px;width:237.6px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:16.0px;font-weight:700;font-style:normal;color:#DBAE56">mAP@0.5 máscara</span></p></div></div>
+<div class="shape text" style="left:780.48px;top:851.04px;width:187.2px;height:36.0px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:32.0px;font-weight:700;font-style:normal;color:#FFFDF8">0,780</span></p></div></div>
+<div class="shape text" style="left:1067.04px;top:812.16px;width:158.4px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:16.0px;font-weight:700;font-style:normal;color:#DBAE56">latencia</span></p></div></div>
+<div class="shape text" style="left:1067.04px;top:851.04px;width:252.0px;height:36.0px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:28.0px;font-weight:700;font-style:normal;color:#FFFDF8">~26 ms / imagen</span></p></div></div>
+<div class="shape text" style="left:1399.68px;top:812.16px;width:103.68px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:16.0px;font-weight:700;font-style:normal;color:#DBAE56">salida</span></p></div></div>
+<div class="shape text" style="left:1399.68px;top:851.04px;width:345.6px;height:36.0px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:25.0px;font-weight:700;font-style:normal;color:#FFFDF8">máscara + texto + título</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:1026.72px;width:1548.0px;height:21.6px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13.6px;font-weight:400;font-style:normal;color:#67736E">Fuentes: demo/inference.py · demo/ocr.py · docs/paper-borrador.md</span></p></div></div>
+<div class="shape text" style="left:1664.64px;top:1023.84px;width:155.52px;height:24.48px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#173B32">LUMEN  ·  02</span></p></div></div>
+</section>
+<section class="slide" id="s3" style="background:#F4EFE6" aria-label="Diapositiva 3">
+<div class="shape text" style="left:96.48px;top:57.6px;width:604.8px;height:28.8px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17.0px;font-weight:700;font-style:normal;color:#C45D3D">02 · COMPARACIÓN</span></p></div></div>
+<div class="shape text" style="left:96.48px;top:109.44px;width:1684.8px;height:77.76px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:54.0px;font-weight:700;font-style:normal;color:#173B32">Seis modelos, tres geometrías</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:197.28px;width:1634.4px;height:51.84px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21.0px;font-weight:400;font-style:normal;color:#67736E">La comparación válida ocurre dentro de cada familia: AABB, OBB y máscara miden representaciones diferentes.</span></p></div></div>
+<div class="shape text" style="left:1753.92px;top:61.92px;width:64.8px;height:25.92px"><div class="txt"><p style="text-align:right;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17.0px;font-weight:700;font-style:normal;color:#78A086">03</span></p></div></div>
+<div class="shape" style="left:96.48px;top:263.52px;width:1728.0px;height:2.16px;background:#DED8CE"></div>
+<div class="shape text" style="left:96.48px;top:274px;width:1728px;height:22px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14px;font-weight:700;font-style:normal;color:#67736E">La barra es la latencia dentro de la familia. El mAP se lee en cada columna, no entre columnas.</span></p></div></div>
+
+<div class="shape" style="left:96px;top:304px;width:560px;height:628px;background:#FFFDF8;border:2px solid #DED8CE;border-radius:28px"></div>
+<div class="shape" style="left:96px;top:304px;width:560px;height:92px;background:#F3E5C5;border-radius:28px 28px 0 0"></div>
+<div class="shape" style="left:120px;top:330px;width:40px;height:40px"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="11" width="30" height="26" rx="2" fill="none" stroke="#DBAE56" stroke-width="3"/></svg></div>
+<div class="shape text" style="left:172px;top:324px;width:300px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:28px;font-weight:700;font-style:normal;color:#173B32">AABB</span></p></div></div>
+<div class="shape text" style="left:172px;top:358px;width:300px;height:22px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15px;font-weight:700;font-style:normal;color:#67736E">caja</span></p></div></div>
+<div class="shape" style="left:114px;top:412px;width:524px;height:236px;background:#F3E5C5;border-radius:18px"></div>
+<div class="shape" style="left:114px;top:412px;width:8px;height:236px;background:#DBAE56;border-radius:18px 0 0 18px"></div>
+<div class="shape text" style="left:136px;top:428px;width:470px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:26px;font-weight:700;font-style:normal;color:#173B32">YOLOv8s</span></p></div></div>
+<div class="shape text" style="left:136px;top:474px;width:200px;height:42px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36px;font-weight:700;font-style:normal;color:#173B32">0,822</span></p></div></div>
+<div class="shape text" style="left:346px;top:474px;width:200px;height:42px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36px;font-weight:700;font-style:normal;color:#173B32">0,676</span></p></div></div>
+<div class="shape text" style="left:136px;top:518px;width:200px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">mAP@0.5</span></p></div></div>
+<div class="shape text" style="left:346px;top:518px;width:220px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">mAP@.5:.95</span></p></div></div>
+<div class="shape text" style="left:136px;top:552px;width:220px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">LATENCIA</span></p></div></div>
+<div class="shape text" style="left:396px;top:548px;width:210px;height:26px"><div class="txt"><p style="text-align:right;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:20px;font-weight:700;font-style:normal;color:#173B32">~14 ms</span></p></div></div>
+<div class="shape" style="left:136px;top:584px;width:468px;height:18px;background:#FFFDF8;border-radius:9px"></div>
+<div class="shape" style="left:136px;top:584px;width:55.1px;height:18px;background:#DBAE56;border-radius:9px"></div>
+<div class="shape" style="left:114px;top:662px;width:524px;height:236px;background:#F3E5C5;border-radius:18px"></div>
+<div class="shape" style="left:114px;top:662px;width:8px;height:236px;background:#DBAE56;border-radius:18px 0 0 18px"></div>
+<div class="shape text" style="left:136px;top:678px;width:470px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:26px;font-weight:700;font-style:normal;color:#173B32">Faster R-CNN</span></p></div></div>
+<div class="shape text" style="left:136px;top:724px;width:200px;height:42px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36px;font-weight:700;font-style:normal;color:#173B32">0,799</span></p></div></div>
+<div class="shape text" style="left:346px;top:724px;width:200px;height:42px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36px;font-weight:700;font-style:normal;color:#173B32">0,603</span></p></div></div>
+<div class="shape text" style="left:136px;top:768px;width:200px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">mAP@0.5</span></p></div></div>
+<div class="shape text" style="left:346px;top:768px;width:220px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">mAP@.5:.95</span></p></div></div>
+<div class="shape text" style="left:136px;top:802px;width:220px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">LATENCIA</span></p></div></div>
+<div class="shape text" style="left:396px;top:798px;width:210px;height:26px"><div class="txt"><p style="text-align:right;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:20px;font-weight:700;font-style:normal;color:#173B32">~119 ms</span></p></div></div>
+<div class="shape" style="left:136px;top:834px;width:468px;height:18px;background:#FFFDF8;border-radius:9px"></div>
+<div class="shape" style="left:136px;top:834px;width:468.0px;height:18px;background:#DBAE56;border-radius:9px"></div>
+<div class="shape" style="left:680px;top:304px;width:560px;height:628px;background:#FFFDF8;border:2px solid #DED8CE;border-radius:28px"></div>
+<div class="shape" style="left:680px;top:304px;width:560px;height:92px;background:#F2DCD4;border-radius:28px 28px 0 0"></div>
+<div class="shape" style="left:704px;top:330px;width:40px;height:40px"><svg viewBox="0 0 48 48" aria-hidden="true"><g transform="rotate(-16 24 24)"><rect x="8" y="15" width="32" height="18" rx="2" fill="none" stroke="#C45D3D" stroke-width="3"/></g></svg></div>
+<div class="shape text" style="left:756px;top:324px;width:300px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:28px;font-weight:700;font-style:normal;color:#173B32">OBB</span></p></div></div>
+<div class="shape text" style="left:756px;top:358px;width:300px;height:22px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15px;font-weight:700;font-style:normal;color:#67736E">caja orientada</span></p></div></div>
+<div class="shape" style="left:698px;top:412px;width:524px;height:236px;background:#F2DCD4;border-radius:18px"></div>
+<div class="shape" style="left:698px;top:412px;width:8px;height:236px;background:#C45D3D;border-radius:18px 0 0 18px"></div>
+<div class="shape text" style="left:720px;top:428px;width:470px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:26px;font-weight:700;font-style:normal;color:#173B32">YOLOv8s-OBB</span></p></div></div>
+<div class="shape text" style="left:720px;top:474px;width:200px;height:42px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36px;font-weight:700;font-style:normal;color:#173B32">0,728</span></p></div></div>
+<div class="shape text" style="left:930px;top:474px;width:200px;height:42px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36px;font-weight:700;font-style:normal;color:#173B32">0,351</span></p></div></div>
+<div class="shape text" style="left:720px;top:518px;width:200px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">mAP@0.5</span></p></div></div>
+<div class="shape text" style="left:930px;top:518px;width:220px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">mAP@.5:.95</span></p></div></div>
+<div class="shape text" style="left:720px;top:552px;width:220px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">LATENCIA</span></p></div></div>
+<div class="shape text" style="left:980px;top:548px;width:210px;height:26px"><div class="txt"><p style="text-align:right;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:20px;font-weight:700;font-style:normal;color:#173B32">~31 ms</span></p></div></div>
+<div class="shape" style="left:720px;top:584px;width:468px;height:18px;background:#FFFDF8;border-radius:9px"></div>
+<div class="shape" style="left:720px;top:584px;width:468.0px;height:18px;background:#C45D3D;border-radius:9px"></div>
+<div class="shape" style="left:698px;top:662px;width:524px;height:236px;background:#F2DCD4;border-radius:18px"></div>
+<div class="shape" style="left:698px;top:662px;width:8px;height:236px;background:#C45D3D;border-radius:18px 0 0 18px"></div>
+<div class="shape text" style="left:720px;top:678px;width:470px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:26px;font-weight:700;font-style:normal;color:#173B32">YOLO26s-OBB</span></p></div></div>
+<div class="shape text" style="left:720px;top:724px;width:200px;height:42px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36px;font-weight:700;font-style:normal;color:#173B32">0,848</span></p></div></div>
+<div class="shape text" style="left:930px;top:724px;width:200px;height:42px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36px;font-weight:700;font-style:normal;color:#173B32">0,532</span></p></div></div>
+<div class="shape text" style="left:720px;top:768px;width:200px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">mAP@0.5</span></p></div></div>
+<div class="shape text" style="left:930px;top:768px;width:220px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">mAP@.5:.95</span></p></div></div>
+<div class="shape text" style="left:720px;top:802px;width:220px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">LATENCIA</span></p></div></div>
+<div class="shape text" style="left:980px;top:798px;width:210px;height:26px"><div class="txt"><p style="text-align:right;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:20px;font-weight:700;font-style:normal;color:#173B32">~18 ms</span></p></div></div>
+<div class="shape" style="left:720px;top:834px;width:468px;height:18px;background:#FFFDF8;border-radius:9px"></div>
+<div class="shape" style="left:720px;top:834px;width:271.7px;height:18px;background:#C45D3D;border-radius:9px"></div>
+<div class="shape" style="left:1264px;top:304px;width:560px;height:628px;background:#FFFDF8;border:2px solid #DED8CE;border-radius:28px"></div>
+<div class="shape" style="left:1264px;top:304px;width:560px;height:92px;background:#DCE9DF;border-radius:28px 28px 0 0"></div>
+<div class="shape" style="left:1288px;top:330px;width:40px;height:40px"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M20 7c-3 1-6 6-5 13 1 8-2 14 1 20 4 3 12 2 15-4 3-7 4-16 1-22-2-5-7-8-12-7z" fill="#78A086"/></svg></div>
+<div class="shape text" style="left:1340px;top:324px;width:300px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:28px;font-weight:700;font-style:normal;color:#173B32">MÁSCARA</span></p></div></div>
+<div class="shape text" style="left:1340px;top:358px;width:300px;height:22px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15px;font-weight:700;font-style:normal;color:#67736E">máscara</span></p></div></div>
+<div class="shape" style="left:1282px;top:412px;width:524px;height:236px;background:#DCE9DF;border-radius:18px"></div>
+<div class="shape" style="left:1282px;top:412px;width:8px;height:236px;background:#78A086;border-radius:18px 0 0 18px"></div>
+<div class="shape text" style="left:1304px;top:428px;width:470px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:26px;font-weight:700;font-style:normal;color:#C45D3D">YOLO26s-seg</span></p></div></div>
+<div class="shape text" style="left:1304px;top:474px;width:200px;height:42px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36px;font-weight:700;font-style:normal;color:#173B32">0,780</span></p></div></div>
+<div class="shape text" style="left:1514px;top:474px;width:200px;height:42px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36px;font-weight:700;font-style:normal;color:#173B32">0,562</span></p></div></div>
+<div class="shape text" style="left:1304px;top:518px;width:200px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">mAP@0.5</span></p></div></div>
+<div class="shape text" style="left:1514px;top:518px;width:220px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">mAP@.5:.95</span></p></div></div>
+<div class="shape text" style="left:1304px;top:552px;width:220px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">LATENCIA</span></p></div></div>
+<div class="shape text" style="left:1564px;top:548px;width:210px;height:26px"><div class="txt"><p style="text-align:right;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:20px;font-weight:700;font-style:normal;color:#173B32">~26 ms</span></p></div></div>
+<div class="shape" style="left:1304px;top:584px;width:468px;height:18px;background:#FFFDF8;border-radius:9px"></div>
+<div class="shape" style="left:1304px;top:584px;width:104.0px;height:18px;background:#78A086;border-radius:9px"></div>
+<div class="shape" style="left:1282px;top:662px;width:524px;height:236px;background:#DCE9DF;border-radius:18px"></div>
+<div class="shape" style="left:1282px;top:662px;width:8px;height:236px;background:#78A086;border-radius:18px 0 0 18px"></div>
+<div class="shape text" style="left:1304px;top:678px;width:470px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:26px;font-weight:700;font-style:normal;color:#173B32">Mask R-CNN</span></p></div></div>
+<div class="shape text" style="left:1304px;top:724px;width:200px;height:42px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36px;font-weight:700;font-style:normal;color:#173B32">0,785</span></p></div></div>
+<div class="shape text" style="left:1514px;top:724px;width:200px;height:42px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:36px;font-weight:700;font-style:normal;color:#173B32">0,507</span></p></div></div>
+<div class="shape text" style="left:1304px;top:768px;width:200px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">mAP@0.5</span></p></div></div>
+<div class="shape text" style="left:1514px;top:768px;width:220px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">mAP@.5:.95</span></p></div></div>
+<div class="shape text" style="left:1304px;top:802px;width:220px;height:20px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13px;font-weight:700;font-style:normal;color:#67736E">LATENCIA</span></p></div></div>
+<div class="shape text" style="left:1564px;top:798px;width:210px;height:26px"><div class="txt"><p style="text-align:right;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:20px;font-weight:700;font-style:normal;color:#173B32">~117 ms</span></p></div></div>
+<div class="shape" style="left:1304px;top:834px;width:468px;height:18px;background:#FFFDF8;border-radius:9px"></div>
+<div class="shape" style="left:1304px;top:834px;width:468.0px;height:18px;background:#78A086;border-radius:9px"></div>
+<div class="shape" style="left:96.48px;top:948px;width:1728px;height:40px;background:#F3E5C5;border-radius:8px"></div>
+<div class="shape text" style="left:122px;top:956px;width:1676px;height:24px"><div class="txt"><p style="text-align:center;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13.8px;font-weight:700;font-style:normal;color:#173B32">OBB: validación interna Ultralytics; AABB y máscara: protocolo de reevaluación. No usar esta comparación como ranking global.</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:1026.72px;width:1548.0px;height:21.6px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13.6px;font-weight:400;font-style:normal;color:#67736E">Fuente: docs/paper-borrador.md · validación sobre Book Spine 2 v4</span></p></div></div>
+<div class="shape text" style="left:1664.64px;top:1023.84px;width:155.52px;height:24.48px"><div class="txt"><p style="text-align:right;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#173B32">LUMEN  ·  03</span></p></div></div>
+</section>
+<section class="slide" id="s4" style="background:#F4EFE6" aria-label="Diapositiva 4">
+<div class="shape text" style="left:96.48px;top:57.6px;width:604.8px;height:28.8px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17.0px;font-weight:700;font-style:normal;color:#C45D3D">03 · DECISIÓN</span></p></div></div>
+<div class="shape text" style="left:96.48px;top:109.44px;width:1684.8px;height:77.76px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:54.0px;font-weight:700;font-style:normal;color:#173B32">Comparativa modelos segmentación</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:197.28px;width:1634.4px;height:51.84px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21.0px;font-weight:400;font-style:normal;color:#67736E">Mask R-CNN mejora apenas el mAP@0.5; YOLO26 conserva una máscara competitiva con mucha menos latencia.</span></p></div></div>
+<div class="shape text" style="left:1753.92px;top:61.92px;width:64.8px;height:25.92px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17.0px;font-weight:700;font-style:normal;color:#78A086">04</span></p></div></div>
+<div class="shape" style="left:96.48px;top:263.52px;width:1728.0px;height:2.16px;background:#DED8CE"></div>
+<div class="shape" style="left:97.92px;top:313.92px;width:1111.68px;height:640.8px;background:#FFFDF8;border:2.0px solid #DED8CE;border-radius:106.8px"></div>
+<div class="shape text" style="left:141.12px;top:354.24px;width:648.0px;height:37.44px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:700;font-style:normal;color:#173B32">Comparación dentro de segmentación</span></p></div></div>
+<div class="shape text" style="left:141.12px;top:439.2px;width:233.28px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.8px;font-weight:700;font-style:normal;color:#67736E">MAP@0.5 MÁSCARA</span></p></div></div>
+<div class="shape text" style="left:385.92px;top:437.76px;width:109.44px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#78A086">YOLO26</span></p></div></div>
+<div class="shape" style="left:501.12px;top:439.2px;width:367.2px;height:25.92px;background:#DED8CE"></div>
+<div class="shape" style="left:501.12px;top:439.2px;width:286.42px;height:25.92px;background:#78A086"></div>
+<div class="shape text" style="left:887.04px;top:430.56px;width:100.8px;height:34.56px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:700;font-style:normal;color:#173B32">0,780</span></p></div></div>
+<div class="shape text" style="left:385.92px;top:488.16px;width:109.44px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#C45D3D">MASK</span></p></div></div>
+<div class="shape" style="left:501.12px;top:489.6px;width:367.2px;height:25.92px;background:#DED8CE"></div>
+<div class="shape" style="left:501.12px;top:489.6px;width:288.25px;height:25.92px;background:#C45D3D"></div>
+<div class="shape text" style="left:887.04px;top:480.96px;width:100.8px;height:34.56px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:400;font-style:normal;color:#173B32">0,785</span></p></div></div>
+<div class="shape" style="left:1003.68px;top:453.6px;width:155.52px;height:44.64px;background:#F3E5C5;border-radius:7.44px"></div>
+<div class="shape text" style="left:1003.68px;top:462.96px;width:155.52px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#173B32">0,005 DIFERENCIA</span></p></div></div>
+<div class="shape text" style="left:141.12px;top:587.52px;width:233.28px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.8px;font-weight:700;font-style:normal;color:#67736E">MAP@0.5:0.95</span></p></div></div>
+<div class="shape text" style="left:385.92px;top:586.08px;width:109.44px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#78A086">YOLO26</span></p></div></div>
+<div class="shape" style="left:501.12px;top:587.52px;width:367.2px;height:25.92px;background:#DED8CE"></div>
+<div class="shape" style="left:501.12px;top:587.52px;width:206.37px;height:25.92px;background:#78A086"></div>
+<div class="shape text" style="left:887.04px;top:578.88px;width:100.8px;height:34.56px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:700;font-style:normal;color:#173B32">0,562</span></p></div></div>
+<div class="shape text" style="left:385.92px;top:636.48px;width:109.44px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#C45D3D">MASK</span></p></div></div>
+<div class="shape" style="left:501.12px;top:637.92px;width:367.2px;height:25.92px;background:#DED8CE"></div>
+<div class="shape" style="left:501.12px;top:637.92px;width:186.17px;height:25.92px;background:#C45D3D"></div>
+<div class="shape text" style="left:887.04px;top:629.28px;width:100.8px;height:34.56px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:400;font-style:normal;color:#173B32">0,507</span></p></div></div>
+<div class="shape" style="left:1003.68px;top:601.92px;width:155.52px;height:44.64px;background:#F3E5C5;border-radius:7.44px"></div>
+<div class="shape text" style="left:1003.68px;top:611.28px;width:155.52px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#173B32">MEJOR AJUSTE</span></p></div></div>
+<div class="shape text" style="left:141.12px;top:735.84px;width:233.28px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.8px;font-weight:700;font-style:normal;color:#67736E">LATENCIA</span></p></div></div>
+<div class="shape text" style="left:385.92px;top:734.4px;width:109.44px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#78A086">YOLO26</span></p></div></div>
+<div class="shape" style="left:501.12px;top:735.84px;width:367.2px;height:25.92px;background:#DED8CE"></div>
+<div class="shape" style="left:501.12px;top:735.84px;width:81.6px;height:25.92px;background:#78A086"></div>
+<div class="shape text" style="left:887.04px;top:727.2px;width:100.8px;height:34.56px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:700;font-style:normal;color:#173B32">26 ms</span></p></div></div>
+<div class="shape text" style="left:385.92px;top:784.8px;width:109.44px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#C45D3D">MASK</span></p></div></div>
+<div class="shape" style="left:501.12px;top:786.24px;width:367.2px;height:25.92px;background:#DED8CE"></div>
+<div class="shape" style="left:501.12px;top:786.24px;width:367.2px;height:25.92px;background:#C45D3D"></div>
+<div class="shape text" style="left:887.04px;top:777.6px;width:100.8px;height:34.56px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:400;font-style:normal;color:#173B32">117 ms</span></p></div></div>
+<div class="shape" style="left:1003.68px;top:750.24px;width:155.52px;height:44.64px;background:#F3E5C5;border-radius:7.44px"></div>
+<div class="shape text" style="left:1003.68px;top:759.6px;width:155.52px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#173B32">4,5× MÁS RÁPIDO</span></p></div></div>
+<div class="shape" style="left:1249.92px;top:313.92px;width:574.56px;height:640.8px;background:#173B32;border-radius:95.76px"></div>
+<div class="shape" style="left:1392.48px;top:364.32px;width:288.0px;height:44.64px;background:#DBAE56;border-radius:7.44px"></div>
+<div class="shape text" style="left:1392.48px;top:373.68px;width:288.0px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#173B32">MODELO ELEGIDO</span></p></div></div>
+<div class="shape text" style="left:1307.52px;top:450.72px;width:459.36px;height:74.88px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:50.0px;font-weight:700;font-style:normal;color:#FFFDF8">YOLO26s-seg</span></p></div></div>
+<div class="shape text" style="left:1310.4px;top:555.84px;width:452.16px;height:100.8px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:27.0px;font-weight:700;font-style:normal;color:#DCE9DF">Máscara útil para OCR
++ velocidad interactiva</span></p></div></div>
+<div class="shape text" style="left:1323.36px;top:696.96px;width:424.8px;height:194.4px"><div class="txt"><p style="text-align:left;margin:0 0 20.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21.2px;font-weight:400;font-style:normal;color:#DBAE56">●  Reduce fondo y texto vecino.</span></p><p style="text-align:left;margin:0 0 20.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21.2px;font-weight:400;font-style:normal;color:#FFFDF8">●  Mantiene calidad competitiva.</span></p><p style="text-align:left;margin:0 0 20.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21.2px;font-weight:400;font-style:normal;color:#FFFDF8">●  Encaja en el pipeline completo.</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:1026.72px;width:1548.0px;height:21.6px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13.6px;font-weight:400;font-style:normal;color:#67736E">Fuente: docs/paper-borrador.md · mejor checkpoint YOLO26s-seg: época 24</span></p></div></div>
+<div class="shape text" style="left:1664.64px;top:1023.84px;width:155.52px;height:24.48px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#173B32">LUMEN  ·  04</span></p></div></div>
+</section>
+<section class="slide" id="s5" style="background:#F4EFE6" aria-label="Diapositiva 5">
+<div class="shape text" style="left:96.48px;top:57.6px;width:604.8px;height:28.8px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17.0px;font-weight:700;font-style:normal;color:#C45D3D">04 · EJEMPLO</span></p></div></div>
+<div class="shape text" style="left:96.48px;top:109.44px;width:1684.8px;height:77.76px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:54.0px;font-weight:700;font-style:normal;color:#173B32">De la máscara al título</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:197.28px;width:1634.4px;height:51.84px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21.0px;font-weight:400;font-style:normal;color:#67736E">Un caso real muestra cómo YOLO26s-seg aísla el lomo y habilita una lectura OCR verificable.</span></p></div></div>
+<div class="shape text" style="left:1753.92px;top:61.92px;width:64.8px;height:25.92px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17.0px;font-weight:700;font-style:normal;color:#78A086">05</span></p></div></div>
+<div class="shape" style="left:96.48px;top:263.52px;width:1728.0px;height:2.16px;background:#DED8CE"></div>
+<div class="shape" style="left:96.48px;top:309.6px;width:1061.28px;height:656.64px;background:#FFFDF8;border:2.0px solid #DED8CE;border-radius:109.44px"></div>
+<div class="shape pic" style="left:120.96px;top:334.08px;width:1012.32px;height:581.76px;overflow:hidden"><img src="assets/estante.jpg" alt="" style="position:absolute;left:-0.00px;top:-88.74px;width:1012.32px;height:759.24px"></div>
+<div class="shape" style="left:707.04px;top:344.16px;width:48.96px;height:557.28px;border:6.0px solid #DBAE56"></div>
+<div class="shape" style="left:727.2px;top:357.12px;width:247.68px;height:44.64px;background:#DBAE56;border-radius:7.44px"></div>
+<div class="shape text" style="left:727.2px;top:366.48px;width:247.68px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#173B32">LOMO SELECCIONADO</span></p></div></div>
+<div class="shape text" style="left:152.64px;top:931.68px;width:302.4px;height:21.6px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#67736E">01 · FOTO PROPIA</span></p></div></div>
+<div class="shape text" style="left:378.72px;top:928.8px;width:717.12px;height:25.92px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:16.38px;font-weight:700;font-style:normal;color:#173B32">YOLO26s-seg localizó 25 lomos en la escena.</span></p></div></div>
+<div class="shape" style="left:1196.64px;top:309.6px;width:627.84px;height:656.64px;background:#173B32;border-radius:104.64px"></div>
+<div class="shape text" style="left:1251.36px;top:357.12px;width:403.2px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#DBAE56">02 · RECORTE ENDEREZADO</span></p></div></div>
+<div class="shape" style="left:1251.36px;top:404.64px;width:518.4px;height:123.84px;background:#F3E5C5;border:2.0px solid #DBAE56;border-radius:20.64px"></div>
+<div class="shape pic" style="left:1265.76px;top:452.36px;width:489.6px;height:28.39px;overflow:hidden"><img src="assets/recorte.jpg" alt="" style="position:absolute;left:-0.00px;top:-0.00px;width:489.60px;height:28.39px"></div>
+<div class="shape text" style="left:1251.36px;top:576.0px;width:244.8px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#78A086">03 · PADDLEOCR</span></p></div></div>
+<div class="shape text" style="left:1251.36px;top:626.4px;width:518.4px;height:54.72px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:35.0px;font-weight:700;font-style:normal;color:#FFFDF8">DESDE EL OJO DEL PEZ</span></p></div></div>
+<div class="shape text" style="left:1252.8px;top:699.84px;width:331.2px;height:31.68px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21.0px;font-weight:700;font-style:normal;color:#DCE9DF">Pablo De Santis</span></p></div></div>
+<div class="shape" style="left:1251.36px;top:784.8px;width:233.28px;height:138.24px;background:#DCE9DF;border:2.0px solid #DED8CE;border-radius:23.04px"></div>
+<div class="shape" style="left:1251.36px;top:784.8px;width:8.64px;height:138.24px;background:#78A086"></div>
+<div class="shape text" style="left:1283.04px;top:803.52px;width:182.88px;height:51.84px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:38.0px;font-weight:700;font-style:normal;color:#173B32">0,944</span></p></div></div>
+<div class="shape text" style="left:1284.48px;top:876.96px;width:181.44px;height:24.48px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.2px;font-weight:700;font-style:normal;color:#67736E">CONFIANZA OCR</span></p></div></div>
+<div class="shape" style="left:1522.08px;top:784.8px;width:247.68px;height:138.24px;background:#F3E5C5;border:2.0px solid #DED8CE;border-radius:23.04px"></div>
+<div class="shape" style="left:1522.08px;top:784.8px;width:8.64px;height:138.24px;background:#DBAE56"></div>
+<div class="shape text" style="left:1553.76px;top:803.52px;width:197.28px;height:51.84px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:40.0px;font-weight:700;font-style:normal;color:#173B32">100%</span></p></div></div>
+<div class="shape text" style="left:1555.2px;top:876.96px;width:195.84px;height:24.48px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.2px;font-weight:700;font-style:normal;color:#67736E">SIMILITUD</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:1026.72px;width:1548.0px;height:21.6px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13.6px;font-weight:400;font-style:normal;color:#67736E">Fuentes: fotos_propias/estante2.jpg · resultados_ocr/recortes/estante2_009.jpg</span></p></div></div>
+<div class="shape text" style="left:1664.64px;top:1023.84px;width:155.52px;height:24.48px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#173B32">LUMEN  ·  05</span></p></div></div>
+</section>
+<section class="slide" id="s6" style="background:#F4EFE6" aria-label="Diapositiva 6">
+<div class="shape text" style="left:96.48px;top:57.6px;width:604.8px;height:28.8px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17.0px;font-weight:700;font-style:normal;color:#C45D3D">05 · OCR</span></p></div></div>
+<div class="shape text" style="left:96.48px;top:109.44px;width:1684.8px;height:77.76px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:54.0px;font-weight:700;font-style:normal;color:#173B32">Comparativa OCRs</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:197.28px;width:1634.4px;height:51.84px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21.0px;font-weight:400;font-style:normal;color:#67736E">Mismos 19 recortes de YOLO26s-seg: EasyOCR queda atrás en confianza, catálogo y latencia.</span></p></div></div>
+<div class="shape text" style="left:1753.92px;top:61.92px;width:64.8px;height:25.92px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17.0px;font-weight:700;font-style:normal;color:#78A086">06</span></p></div></div>
+<div class="shape" style="left:96.48px;top:263.52px;width:1728.0px;height:2.16px;background:#DED8CE"></div>
+<div class="shape" style="left:97.92px;top:313.92px;width:1111.68px;height:640.8px;background:#FFFDF8;border:2.0px solid #DED8CE;border-radius:106.8px"></div>
+<div class="shape text" style="left:141.12px;top:354.24px;width:648.0px;height:37.44px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:31.0px;font-weight:700;font-style:normal;color:#173B32">Comparación sobre 19 recortes</span></p></div></div>
+<div class="shape text" style="left:141.12px;top:439.2px;width:233.28px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.8px;font-weight:700;font-style:normal;color:#67736E">CONFIANZA MEDIA</span></p></div></div>
+<div class="shape text" style="left:385.92px;top:437.76px;width:109.44px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#78A086">PADDLE</span></p></div></div>
+<div class="shape" style="left:501.12px;top:439.2px;width:367.2px;height:25.92px;background:#DED8CE"></div>
+<div class="shape" style="left:501.12px;top:439.2px;width:348.84px;height:25.92px;background:#78A086"></div>
+<div class="shape text" style="left:887.04px;top:430.56px;width:100.8px;height:34.56px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:700;font-style:normal;color:#173B32">0,95</span></p></div></div>
+<div class="shape text" style="left:385.92px;top:488.16px;width:109.44px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#C45D3D">EASY</span></p></div></div>
+<div class="shape" style="left:501.12px;top:489.6px;width:367.2px;height:25.92px;background:#DED8CE"></div>
+<div class="shape" style="left:501.12px;top:489.6px;width:209.3px;height:25.92px;background:#C45D3D"></div>
+<div class="shape text" style="left:887.04px;top:480.96px;width:100.8px;height:34.56px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:400;font-style:normal;color:#173B32">0,57</span></p></div></div>
+<div class="shape" style="left:1003.68px;top:453.6px;width:176.0px;height:44.64px;background:#F3E5C5;border-radius:7.44px"></div>
+<div class="shape text" style="left:1003.68px;top:462.96px;width:176.0px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#173B32">MEJOR TEXTO</span></p></div></div>
+<div class="shape text" style="left:141.12px;top:587.52px;width:233.28px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.8px;font-weight:700;font-style:normal;color:#67736E">MATCHES ≥ 85</span></p></div></div>
+<div class="shape text" style="left:385.92px;top:586.08px;width:109.44px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#78A086">PADDLE</span></p></div></div>
+<div class="shape" style="left:501.12px;top:587.52px;width:367.2px;height:25.92px;background:#DED8CE"></div>
+<div class="shape" style="left:501.12px;top:587.52px;width:154.61px;height:25.92px;background:#78A086"></div>
+<div class="shape text" style="left:887.04px;top:578.88px;width:100.8px;height:34.56px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:700;font-style:normal;color:#173B32">8/19</span></p></div></div>
+<div class="shape text" style="left:385.92px;top:636.48px;width:109.44px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#C45D3D">EASY</span></p></div></div>
+<div class="shape" style="left:501.12px;top:637.92px;width:367.2px;height:25.92px;background:#DED8CE"></div>
+<div class="shape" style="left:501.12px;top:637.92px;width:57.98px;height:25.92px;background:#C45D3D"></div>
+<div class="shape text" style="left:887.04px;top:629.28px;width:100.8px;height:34.56px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:400;font-style:normal;color:#173B32">3/19</span></p></div></div>
+<div class="shape" style="left:1003.68px;top:601.92px;width:176.0px;height:44.64px;background:#F3E5C5;border-radius:7.44px"></div>
+<div class="shape text" style="left:1003.68px;top:611.28px;width:176.0px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#173B32">2,7× TÍTULOS</span></p></div></div>
+<div class="shape text" style="left:141.12px;top:735.84px;width:233.28px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.8px;font-weight:700;font-style:normal;color:#67736E">LATENCIA</span></p></div></div>
+<div class="shape text" style="left:385.92px;top:734.4px;width:109.44px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#78A086">PADDLE</span></p></div></div>
+<div class="shape" style="left:501.12px;top:735.84px;width:367.2px;height:25.92px;background:#DED8CE"></div>
+<div class="shape" style="left:501.12px;top:735.84px;width:16.0px;height:25.92px;background:#78A086"></div>
+<div class="shape text" style="left:887.04px;top:727.2px;width:100.8px;height:34.56px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:700;font-style:normal;color:#173B32">~0,6 s</span></p></div></div>
+<div class="shape text" style="left:385.92px;top:784.8px;width:109.44px;height:25.92px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#C45D3D">EASY</span></p></div></div>
+<div class="shape" style="left:501.12px;top:786.24px;width:367.2px;height:25.92px;background:#DED8CE"></div>
+<div class="shape" style="left:501.12px;top:786.24px;width:367.2px;height:25.92px;background:#C45D3D"></div>
+<div class="shape text" style="left:887.04px;top:777.6px;width:100.8px;height:34.56px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:19.0px;font-weight:400;font-style:normal;color:#173B32">~38 s</span></p></div></div>
+<div class="shape" style="left:1008.0px;top:750.24px;width:188.0px;height:44.64px;background:#F3E5C5;border-radius:7.44px"></div>
+<div class="shape text" style="left:1008.0px;top:759.6px;width:188.0px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0;white-space:nowrap"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13.5px;font-weight:700;font-style:normal;color:#173B32">~63× MÁS RÁPIDO</span></p></div></div>
+<div class="shape" style="left:1249.92px;top:313.92px;width:574.56px;height:640.8px;background:#173B32;border-radius:95.76px"></div>
+<div class="shape" style="left:1392.48px;top:364.32px;width:288.0px;height:44.64px;background:#DBAE56;border-radius:7.44px"></div>
+<div class="shape text" style="left:1392.48px;top:373.68px;width:288.0px;height:21.6px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:15.0px;font-weight:700;font-style:normal;color:#173B32">MOTOR ELEGIDO</span></p></div></div>
+<div class="shape text" style="left:1307.52px;top:450.72px;width:459.36px;height:74.88px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:50.0px;font-weight:700;font-style:normal;color:#FFFDF8">PaddleOCR</span></p></div></div>
+<div class="shape text" style="left:1310.4px;top:555.84px;width:452.16px;height:100.8px"><div class="txt"><p style="text-align:center;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:27.0px;font-weight:700;font-style:normal;color:#DCE9DF">PP-OCRv3 en español
++ lectura interactiva</span></p></div></div>
+<div class="shape text" style="left:1323.36px;top:696.96px;width:424.8px;height:194.4px"><div class="txt"><p style="text-align:left;margin:0 0 20.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21.2px;font-weight:400;font-style:normal;color:#DBAE56">●  Confianza media 0,95.</span></p><p style="text-align:left;margin:0 0 20.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21.2px;font-weight:400;font-style:normal;color:#FFFDF8">●  Identifica 8 de 19 títulos.</span></p><p style="text-align:left;margin:0 0 20.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21.2px;font-weight:400;font-style:normal;color:#FFFDF8">●  Mediana de ~0,6 s por recorte.</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:1026.72px;width:1548.0px;height:21.6px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13.6px;font-weight:400;font-style:normal;color:#67736E">Fuente: docs/paper-borrador.md · 19 recortes, dos fotos propias · umbral RapidFuzz 85</span></p></div></div>
+<div class="shape text" style="left:1664.64px;top:1023.84px;width:155.52px;height:24.48px"><div class="txt"><p style="text-align:right;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;font-style:normal;color:#173B32">LUMEN  ·  06</span></p></div></div>
+</section>
+<section class="slide" id="s7" style="background:#173B32" aria-label="Diapositiva 7">
+<div class="shape pic" style="left:1152.0px;top:0.0px;width:767.52px;height:1080.0px;overflow:hidden"><img src="assets/estante.jpg" alt="" style="position:absolute;left:-336.24px;top:-0.00px;width:1440.00px;height:1080.00px"></div>
+<div class="shape" style="left:1127.52px;top:0.0px;width:25.92px;height:1080.0px;background:#DBAE56"></div>
+<div class="shape" style="left:93.6px;top:54.72px;width:57.6px;height:57.6px;background:#FFFDF8"></div>
+<div class="shape" style="left:105.12px;top:64.8px;width:7.2px;height:37.44px;background:#DBAE56"></div>
+<div class="shape" style="left:118.08px;top:64.8px;width:21.6px;height:37.44px;background:#C45D3D"></div>
+<div class="shape text" style="left:103.68px;top:262.08px;width:914.4px;height:178.56px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:66.0px;font-weight:700;font-style:normal;color:#FFFDF8">Del lomo
+al inventario</span></p></div></div>
+<div class="shape text" style="left:108.0px;top:485.28px;width:924.48px;height:112.32px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:29.0px;font-weight:400;font-style:normal;color:#DCE9DF">YOLO26s-seg convierte la geometría del estante en un recorte útil;
+el OCR y el catálogo lo convierten en información accionable.</span></p></div></div>
+<div class="shape" style="left:108.0px;top:668.16px;width:256.32px;height:138.24px;background:#DCE9DF;border:2.0px solid #DED8CE;border-radius:23.04px"></div>
+<div class="shape" style="left:108.0px;top:668.16px;width:8.64px;height:138.24px;background:#78A086"></div>
+<div class="shape text" style="left:139.68px;top:686.88px;width:205.92px;height:51.84px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:42.0px;font-weight:700;font-style:normal;color:#173B32">0,780</span></p></div></div>
+<div class="shape text" style="left:141.12px;top:760.32px;width:204.48px;height:24.48px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.2px;font-weight:700;font-style:normal;color:#67736E">MAP@0.5 MÁSCARA</span></p></div></div>
+<div class="shape" style="left:393.12px;top:668.16px;width:256.32px;height:138.24px;background:#F3E5C5;border:2.0px solid #DED8CE;border-radius:23.04px"></div>
+<div class="shape" style="left:393.12px;top:668.16px;width:8.64px;height:138.24px;background:#DBAE56"></div>
+<div class="shape text" style="left:424.8px;top:686.88px;width:205.92px;height:51.84px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:38.0px;font-weight:700;font-style:normal;color:#173B32">~26 ms</span></p></div></div>
+<div class="shape text" style="left:426.24px;top:760.32px;width:204.48px;height:24.48px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.2px;font-weight:700;font-style:normal;color:#67736E">LATENCIA</span></p></div></div>
+<div class="shape" style="left:678.24px;top:668.16px;width:256.32px;height:138.24px;background:#F2DCD4;border:2.0px solid #DED8CE;border-radius:23.04px"></div>
+<div class="shape" style="left:678.24px;top:668.16px;width:8.64px;height:138.24px;background:#C45D3D"></div>
+<div class="shape text" style="left:709.92px;top:686.88px;width:205.92px;height:51.84px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:42.0px;font-weight:700;font-style:normal;color:#173B32">8/19</span></p></div></div>
+<div class="shape text" style="left:711.36px;top:760.32px;width:204.48px;height:24.48px"><div class="txt"><p style="text-align:left;margin:0 0 0.0px 0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.2px;font-weight:700;font-style:normal;color:#67736E">MATCHES OCR</span></p></div></div>
+</section>
+<section class="slide slide-video" id="s8" style="background:#F4EFE6" aria-label="Diapositiva 8">
+<div class="shape text" style="left:96.48px;top:57.6px;width:604.8px;height:28.8px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17px;font-weight:700;color:#C45D3D">05 · DEMO</span></p></div></div>
+<div class="shape text" style="left:96.48px;top:109.44px;width:1684.8px;height:77.76px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:54px;font-weight:700;color:#173B32">El pipeline en acción</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:197.28px;width:1634.4px;height:51.84px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21px;font-weight:400;color:#67736E">De la foto del estante al título: segmentación, recorte, OCR y vínculo con el catálogo.</span></p></div></div>
+<div class="shape text" style="left:1753.92px;top:61.92px;width:64.8px;height:25.92px"><div class="txt"><p style="text-align:right;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17px;font-weight:700;color:#78A086">08</span></p></div></div>
+<div class="shape" style="left:96.48px;top:263.52px;width:1728px;height:2.16px;background:#DED8CE"></div>
+<div class="video-frame">
+<video id="demo-video" controls playsinline preload="metadata">
+<source src="Grabación 2026-10-11 210958.mp4" type="video/mp4">
+Tu navegador no reproduce este video.
+</video>
+</div>
+<div class="shape text" style="left:97.92px;top:1026.72px;width:1548px;height:21.6px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13.6px;font-weight:400;color:#67736E">Fuente: Grabación 2026-10-11 210958.mp4 · prototipo de demostración</span></p></div></div>
+<div class="shape text" style="left:1664.64px;top:1023.84px;width:155.52px;height:24.48px"><div class="txt"><p style="text-align:right;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;color:#173B32">LUMEN  ·  08</span></p></div></div>
+</section>
+<section class="slide" id="s9" style="background:#F4EFE6" aria-label="Diapositiva 9">
+<div class="shape text" style="left:96.48px;top:57.6px;width:604.8px;height:28.8px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17px;font-weight:700;color:#C45D3D">06 · CONCLUSIONES</span></p></div></div>
+<div class="shape text" style="left:96.48px;top:109.44px;width:1684.8px;height:77.76px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:54px;font-weight:700;color:#173B32">Conclusiones y trabajo futuro</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:197.28px;width:1634.4px;height:51.84px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:21px;font-weight:400;color:#67736E">El pipeline es viable de punta a punta. El inventario a escala sigue abierto.</span></p></div></div>
+<div class="shape text" style="left:1753.92px;top:61.92px;width:64.8px;height:25.92px"><div class="txt"><p style="text-align:right;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:17px;font-weight:700;color:#78A086">09</span></p></div></div>
+<div class="shape" style="left:96.48px;top:263.52px;width:1728px;height:2.16px;background:#DED8CE"></div>
+<div class="shape" style="left:96px;top:300px;width:840px;height:560px;background:#FFFDF8;border:2px solid #DED8CE;border-radius:36px"></div>
+<div class="shape text" style="left:132px;top:332px;width:760px;height:40px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:28px;font-weight:700;color:#173B32">Conclusiones</span></p></div></div>
+<div class="shape" style="left:132px;top:408px;width:52px;height:52px;background:#DBAE56;border-radius:14px"></div>
+<div class="shape text" style="left:132px;top:420px;width:52px;height:28px"><div class="txt"><p style="text-align:center;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:16px;font-weight:700;color:#173B32">01</span></p></div></div>
+<div class="shape text" style="left:204px;top:400px;width:690px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:24px;font-weight:700;color:#173B32">YOLO26s-seg es el más adecuado</span></p></div></div>
+<div class="shape text" style="left:204px;top:442px;width:690px;height:72px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:18px;font-weight:400;color:#67736E">Para leer el lomo, la máscara gana a la caja: recorta a nivel de píxel y deja afuera fondo y texto vecino.</span></p></div></div>
+<div class="shape" style="left:132px;top:548px;width:52px;height:52px;background:#78A086;border-radius:14px"></div>
+<div class="shape text" style="left:132px;top:560px;width:52px;height:28px"><div class="txt"><p style="text-align:center;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:16px;font-weight:700;color:#FFFDF8">02</span></p></div></div>
+<div class="shape text" style="left:204px;top:540px;width:690px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:24px;font-weight:700;color:#173B32">No hay un ganador absoluto</span></p></div></div>
+<div class="shape text" style="left:204px;top:582px;width:690px;height:72px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:18px;font-weight:400;color:#67736E">AABB, OBB y máscara no comparten ranking. YOLO concentra calidad y latencia; densos e inclinados siguen siendo un desafío en recall.</span></p></div></div>
+<div class="shape" style="left:132px;top:688px;width:52px;height:52px;background:#C45D3D;border-radius:14px"></div>
+<div class="shape text" style="left:132px;top:700px;width:52px;height:28px"><div class="txt"><p style="text-align:center;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:16px;font-weight:700;color:#FFFDF8">03</span></p></div></div>
+<div class="shape text" style="left:204px;top:680px;width:690px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:24px;font-weight:700;color:#173B32">PaddleOCR para identificar</span></p></div></div>
+<div class="shape text" style="left:204px;top:722px;width:690px;height:80px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:18px;font-weight:400;color:#67736E">Supera a EasyOCR en confianza, latencia y catálogo. Densidad y tipografía siguen limitando la lectura.</span></p></div></div>
+<div class="shape" style="left:960px;top:300px;width:864px;height:560px;background:#173B32;border-radius:36px"></div>
+<div class="shape text" style="left:996px;top:332px;width:760px;height:40px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:28px;font-weight:700;color:#FFFDF8">Trabajo futuro</span></p></div></div>
+<div class="shape" style="left:996px;top:408px;width:52px;height:52px;background:#DBAE56;border-radius:14px"></div>
+<div class="shape text" style="left:996px;top:420px;width:52px;height:28px"><div class="txt"><p style="text-align:center;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:16px;font-weight:700;color:#173B32">01</span></p></div></div>
+<div class="shape text" style="left:1068px;top:400px;width:710px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:24px;font-weight:700;color:#FFFDF8">Ampliar OCR y prototipo</span></p></div></div>
+<div class="shape text" style="left:1068px;top:442px;width:710px;height:72px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:18px;font-weight:400;color:#DCE9DF">Más fotos y condiciones de captura. Umbrales, NMS según densidad y un recorte más robusto.</span></p></div></div>
+<div class="shape" style="left:996px;top:548px;width:52px;height:52px;background:#78A086;border-radius:14px"></div>
+<div class="shape text" style="left:996px;top:560px;width:52px;height:28px"><div class="txt"><p style="text-align:center;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:16px;font-weight:700;color:#FFFDF8">02</span></p></div></div>
+<div class="shape text" style="left:1068px;top:540px;width:710px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:24px;font-weight:700;color:#FFFDF8">Matching a escala de catálogo</span></p></div></div>
+<div class="shape text" style="left:1068px;top:582px;width:710px;height:72px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:18px;font-weight:400;color:#DCE9DF">El many-to-many contra catálogos grandes es una etapa propia, separada del mAP.</span></p></div></div>
+<div class="shape" style="left:996px;top:688px;width:52px;height:52px;background:#C45D3D;border-radius:14px"></div>
+<div class="shape text" style="left:996px;top:700px;width:52px;height:28px"><div class="txt"><p style="text-align:center;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:16px;font-weight:700;color:#FFFDF8">03</span></p></div></div>
+<div class="shape text" style="left:1068px;top:680px;width:710px;height:36px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos Display','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:24px;font-weight:700;color:#FFFDF8">Escalar la solución</span></p></div></div>
+<div class="shape text" style="left:1068px;top:722px;width:710px;height:80px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:18px;font-weight:400;color:#DCE9DF">El flujo ya recorre una escena de punta a punta. El siguiente paso es llevarlo al inventario de la estantería.</span></p></div></div>
+<div class="shape text" style="left:97.92px;top:1026.72px;width:1548px;height:21.6px"><div class="txt"><p style="text-align:left;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:13.6px;font-weight:400;color:#67736E">Fuente: docs/paper-borrador.md · sección IX</span></p></div></div>
+<div class="shape text" style="left:1664.64px;top:1023.84px;width:155.52px;height:24.48px"><div class="txt"><p style="text-align:right;margin:0"><span style="font-family:'Aptos','Aptos','Segoe UI','Helvetica Neue',sans-serif;font-size:14.4px;font-weight:700;color:#173B32">LUMEN  ·  09</span></p></div></div>
+</section>
+</div>
+<nav class="nav" aria-label="Navegación">
+  <button type="button" id="prev" aria-label="Diapositiva anterior">‹</button>
+  <span class="count" id="count">1 / 9</span>
+  <button type="button" id="next" aria-label="Diapositiva siguiente">›</button>
+</nav>
+<script>
+const slides = [...document.querySelectorAll(".slide")];
+let index = 0;
+const demoVideo = document.getElementById("demo-video");
+function show(n) {
+  index = (n + slides.length) % slides.length;
+  slides.forEach((s, i) => s.classList.toggle("active", i === index));
+  document.getElementById("count").textContent = (index + 1) + " / " + slides.length;
+  history.replaceState(null, "", "#" + (index + 1));
+  if (!demoVideo) return;
+  if (slides[index].id === "s8") {
+    demoVideo.play().catch(() => {});
+  } else {
+    demoVideo.pause();
+  }
+}
+function fit() {
+  const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+  const x = (window.innerWidth - 1920 * scale) / 2;
+  const y = (window.innerHeight - 1080 * scale) / 2;
+  document.getElementById("scaler").style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+}
+document.getElementById("prev").addEventListener("click", () => show(index - 1));
+document.getElementById("next").addEventListener("click", () => show(index + 1));
+document.addEventListener("keydown", (e) => {
+  if (e.key === " " && slides[index].id === "s8" && demoVideo) {
+    e.preventDefault();
+    if (demoVideo.paused) demoVideo.play().catch(() => {});
+    else demoVideo.pause();
+    return;
+  }
+  if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(e.key)) { e.preventDefault(); show(index + 1); }
+  else if (["ArrowLeft", "ArrowUp", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); show(index - 1); }
+  else if (e.key === "Home") { e.preventDefault(); show(0); }
+  else if (e.key === "End") { e.preventDefault(); show(slides.length - 1); }
+});
+let touchX = null;
+document.addEventListener("touchstart", (e) => { touchX = e.changedTouches[0].clientX; }, {passive: true});
+document.addEventListener("touchend", (e) => {
+  if (touchX == null) return;
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1));
+  touchX = null;
+});
+window.addEventListener("resize", fit);
+const start = Math.max(0, (parseInt(location.hash.slice(1), 10) || 1) - 1);
+fit();
+show(start);
+</script>
+</body>
+</html>

@@ -106,19 +106,16 @@ class DemoTests(unittest.TestCase):
         crops = output / "recortes"
         crops.mkdir(parents=True)
         (output / "comparativa_ocr.csv").write_text(
-            "crop_id,paddleocr_confianza,paddleocr_latencia_ms\n"
-            "book_001,0.9,500\nbook_002,1.0,700\n", encoding="utf-8")
-        (output / "comparativa_catalogo.csv").write_text(
-            "crop_id,paddleocr_texto,paddleocr_match_titulo,paddleocr_match_score,paddleocr_coincide\n"
-            "book_001,texto,EL PRINCIPITO,90,True\n"
-            "book_002,otro,SIN MATCH,20,False\n", encoding="utf-8")
+            "crop_id,paddleocr_texto,paddleocr_confianza,paddleocr_latencia_ms\n"
+            "book_001,El Principito,0.9,500\nbook_002,Otro libro,1.0,700\n", encoding="utf-8")
         (crops / "book_001.jpg").touch()
 
         rows, stats, gallery = ocr_experiment(self.root)
 
-        self.assertEqual(stats, {"crops": "2", "confidence": "0.950", "matches": "1/2",
+        self.assertEqual(stats, {"crops": "2", "confidence": "0.950", "readings": "2/2",
                                  "latency": "600 ms"})
-        self.assertEqual(rows[0][-1], "90.0%")
+        self.assertEqual(rows[0], ["book_001", "El Principito", "0.900", "500 ms"])
+        self.assertEqual(len(rows), 2)
         self.assertEqual(len(gallery), 1)
 
 

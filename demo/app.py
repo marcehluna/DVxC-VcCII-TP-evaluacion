@@ -15,11 +15,8 @@ from demo.ocr import OCRReading, iter_readings
 
 PRIMARY_MODEL_NAME = "YOLO26 segmentación"
 PRIMARY_MODEL_INDEX = next(index for index, spec in enumerate(MODELS) if spec.name == PRIMARY_MODEL_NAME)
-OCR_HEADERS = ["Recorte", "Texto leído por PaddleOCR", "Título del catálogo", "Similitud"]
-LIVE_OCR_HEADERS = [
-    "Lomo", "Texto OCR", "Confianza OCR", "Rotación", "Título del catálogo",
-    "Autor", "Similitud", "Tiempo OCR (ms)",
-]
+OCR_HEADERS = ["Recorte", "Nombre detectado", "Confianza OCR", "Tiempo OCR (ms)"]
+LIVE_OCR_HEADERS = ["Lomo", "Nombre detectado", "Confianza OCR", "Rotación", "Tiempo OCR (ms)"]
 
 
 # La interfaz conserva componentes nativos de Gradio para accesibilidad y callbacks,
@@ -99,8 +96,8 @@ APP_CSS = """
 .library-flow-item { align-items: center; display: grid; gap: 14px; grid-template-columns: auto 1fr; padding: 18px 22px; }
 .library-flow-item + .library-flow-item { border-left: 1px solid var(--library-line); }
 .library-flow-item b { color: var(--library-copper); font-family: Georgia, serif; font-size: 25px; font-weight: 500; }
-.library-flow-item strong { display: block; font-size: 14px; }
-.library-flow-item span { color: var(--library-muted); font-size: 12px; }
+.library-flow-item strong { color: #21352f !important; display: block; font-size: 14px; }
+.library-flow-item span { color: #596760 !important; font-size: 12px; }
 .library-section { margin-bottom: 88px !important; }
 .section-heading { align-items: end; display: grid; gap: 32px; grid-template-columns: 1fr minmax(280px,470px); margin-bottom: 24px; }
 .section-heading h2 {
@@ -153,17 +150,32 @@ APP_CSS = """
 .model-picker label { background: #fffdf8 !important; border: 1px solid var(--library-line) !important; border-radius: 7px !important; padding: 10px 12px !important; }
 .model-picker label:has(input:checked) { background: #e6eee9 !important; border-color: #315f50 !important; box-shadow: inset 3px 0 0 #315f50; }
 .advanced-paths { background: rgba(255,253,248,.65) !important; border-radius: 9px !important; margin-top: 14px !important; }
-#source-image { background: #fffdf8 !important; border: 1px dashed #af9d85 !important; border-radius: 11px !important; min-height: 410px; overflow: hidden; }
+#source-image { background: #e9e0d2 !important; border: 1px dashed #9f8b72 !important; border-radius: 11px !important; min-height: 410px; overflow: hidden; }
+#source-image .wrap, #source-image .upload-container, #source-image .image-container,
+#source-image .empty, #source-image > div { background-color: #e9e0d2 !important; }
+#source-image p, #source-image span, #source-image svg { color: #31483f !important; }
+#source-image button { background: #fffaf0 !important; border-color: #c9bba6 !important; color: #21352f !important; }
 .run-card { background: #315f50 !important; border: 0 !important; border-radius: 12px 12px 28px 12px !important; color: white !important; min-height: 410px; padding: 26px !important; }
 .run-card .block, .run-card .form { background: transparent !important; }
 .run-card label > span, .run-card .prose, .run-card p { color: rgba(255,255,255,.78) !important; }
 .run-card input { color: #21352f !important; }
+#confidence-slider input[type="number"], #max-ocr-books input[type="number"],
+.run-card input[type="number"] {
+    background: #fffaf0 !important; border: 1px solid #cbbca7 !important;
+    border-radius: 6px !important; color: #173b32 !important; font-weight: 800 !important;
+    opacity: 1 !important;
+}
+#confidence-slider input[type="range"], #max-ocr-books input[type="range"] { accent-color: #d07a55 !important; }
+.run-card button.reset-button {
+    align-self: center !important; height: 22px !important; min-height: 22px !important;
+    line-height: 1 !important; margin: 0 !important; padding: 0 8px !important;
+}
 .run-card button.primary { background: #d07a55 !important; border-color: #d07a55 !important; margin-top: 12px; }
 .run-intro h3 { color: white; font-family: Georgia, serif; font-size: 29px; font-weight: 500; margin: 0 0 8px; }
 .run-intro p { line-height: 1.6; margin: 0 0 24px; }
 .examples-holder { margin-top: 14px !important; }
-.run-status { background: #e9e0d2 !important; border: 1px solid var(--library-line) !important; border-radius: 8px !important; color: var(--library-ink) !important; margin-bottom: 16px !important; padding: 12px 16px !important; }
-.run-status p { margin: 0 !important; }
+.run-status { background: #e9e0d2 !important; border: 1px solid var(--library-line) !important; border-radius: 8px !important; color: #21352f !important; margin-bottom: 16px !important; padding: 12px 16px !important; }
+.run-status p, .run-status span, .run-status strong { color: #21352f !important; margin: 0 !important; }
 #result-gallery { background: #2b3e37 !important; border: 0 !important; border-radius: 12px !important; min-height: 360px; overflow: hidden; }
 #result-gallery .thumbnail-item img { max-height: 500px !important; object-fit: contain !important; width: 100% !important; }
 .result-table { margin-top: 18px !important; }
@@ -178,11 +190,17 @@ footer { display: none !important; }
 .dark .control-rail, .dark .run-status, .dark #historical-metrics th { background: #2a3831 !important; }
 .dark .library-hero-copy { color: #b9c5be; }
 .dark .library-flow { background: #e8dfd0; color: #21352f; }
-.dark .library-flow span { color: #68736c; }
+.dark .library-flow span { color: #596760 !important; }
 .dark #historical-metrics thead * { background: #2a3831 !important; color: #f7f1e7 !important; }
 .dark .model-picker label { background: #24322c !important; }
 .dark .model-picker label:has(input:checked) { background: #304a3f !important; }
-.dark .advanced-paths, .dark #source-image { background: #1d2924 !important; }
+.dark .advanced-paths { background: #1d2924 !important; }
+.dark .run-status { background: #e9e0d2 !important; }
+.dark #source-image, .dark #source-image .wrap, .dark #source-image .upload-container,
+.dark #source-image .image-container, .dark #source-image .empty, .dark #source-image > div {
+    background: #2a3831 !important;
+}
+.dark #source-image p, .dark #source-image span, .dark #source-image svg { color: #edf2ec !important; }
 .dark .pipeline-card { background: #24322c; }
 .dark .ocr-kpi { background: #2a3831; }
 @media (max-width: 850px) {
@@ -209,38 +227,35 @@ def _section_heading(number: str, title: str, description: str) -> str:
 
 def ocr_experiment(root=ROOT) -> tuple[list[list], dict[str, str], list[tuple[str, str]]]:
     """Resume los artefactos generados por notebooks/OCR.ipynb."""
-    catalog_path = root / "resultados_ocr" / "comparativa_catalogo.csv"
     comparison_path = root / "resultados_ocr" / "comparativa_ocr.csv"
     crops_dir = root / "resultados_ocr" / "recortes"
 
-    with catalog_path.open(encoding="utf-8", newline="") as handle:
-        catalog_rows = list(csv.DictReader(handle))
     with comparison_path.open(encoding="utf-8", newline="") as handle:
         comparison_rows = list(csv.DictReader(handle))
 
-    matched = [row for row in catalog_rows if row.get("paddleocr_coincide", "").lower() == "true"]
     table = [
         [
             row["crop_id"],
-            row["paddleocr_texto"],
-            row["paddleocr_match_titulo"].title(),
-            f'{float(row["paddleocr_match_score"]):.1f}%',
+            row.get("paddleocr_texto", "").strip() or "—",
+            f'{float(row["paddleocr_confianza"]):.3f}',
+            f'{float(row["paddleocr_latencia_ms"]):.0f} ms',
         ]
-        for row in matched
+        for row in comparison_rows
     ]
     confidences = [float(row["paddleocr_confianza"]) for row in comparison_rows]
     latencies = [float(row["paddleocr_latencia_ms"]) for row in comparison_rows]
+    readings = sum(bool(row.get("paddleocr_texto", "").strip()) for row in comparison_rows)
     stats = {
         "crops": str(len(comparison_rows)),
         "confidence": f"{sum(confidences) / len(confidences):.3f}" if confidences else "—",
-        "matches": f"{len(matched)}/{len(catalog_rows)}",
+        "readings": f"{readings}/{len(comparison_rows)}",
         "latency": f"{sum(latencies) / len(latencies):.0f} ms" if latencies else "—",
     }
     gallery = []
-    for row in matched:
+    for row in comparison_rows:
         crop_path = crops_dir / f'{row["crop_id"]}.jpg'
         if crop_path.is_file():
-            gallery.append((str(crop_path), row["paddleocr_match_titulo"].title()))
+            gallery.append((str(crop_path), row.get("paddleocr_texto", "").strip() or "Sin texto"))
     return table, stats, gallery
 
 
@@ -258,7 +273,7 @@ def primary_checkpoint_status(path_override: str) -> str:
     return (
         '<div class="checkpoint-card" role="status" style="padding:16px 18px;border:1px solid #4b8b65;'
         'border-radius:10px;background:#effaf1!important;color:#155c31!important;font-size:15px">'
-        '<strong>YOLO26 listo.</strong> El segmentador elegido está disponible para analizar el estante.</div>'
+        '<strong style="color:#155c31!important">YOLO26 listo.</strong> El segmentador elegido está disponible para analizar el estante.</div>'
     )
 
 
@@ -287,7 +302,7 @@ def checkpoint_status(*path_overrides: str) -> str:
     return (
         '<div class="checkpoint-card" role="status" style="padding:16px 18px;border:1px solid #4b8b65;'
         'border-radius:10px;background:#effaf1!important;color:#155c31!important;font-size:15px">'
-        f'<strong>Catálogo listo.</strong> Los {len(MODELS)} checkpoints están disponibles para comparar.</div>'
+        f'<strong>Modelos listos.</strong> Los {len(MODELS)} checkpoints están disponibles para comparar.</div>'
     )
 
 
@@ -318,21 +333,16 @@ def _ocr_row(reading: OCRReading) -> list:
         reading.text or "—",
         round(reading.confidence, 3),
         f"{reading.rotation}°",
-        reading.catalog_title or "Sin coincidencia",
-        reading.catalog_author or "—",
-        f"{reading.match_score:.1f}%",
         round(reading.latency_ms, 1),
     ]
 
 
 def _ocr_caption(reading: OCRReading) -> str:
-    if reading.catalog_title:
-        return f"Lomo {reading.number} · {reading.catalog_title} · {reading.match_score:.0f}%"
     return f"Lomo {reading.number} · {reading.text or 'sin texto'}"
 
 
 def run_library_pipeline(image, confidence, max_books, *path_overrides):
-    """Ejecuta YOLO26 y luego OCR/matching sobre cada máscara seleccionada."""
+    """Ejecuta YOLO26 y luego OCR sobre cada máscara seleccionada."""
     if image is None:
         raise gr.Error("Subí una imagen o elegí un ejemplo.")
     if not path_overrides:
@@ -391,10 +401,9 @@ def run_library_pipeline(image, confidence, max_books, *path_overrides):
         ):
             ocr_gallery.append((reading.crop, _ocr_caption(reading)))
             ocr_rows.append(_ocr_row(reading))
-            matches = sum(row[4] != "Sin coincidencia" for row in ocr_rows)
             ocr_message = (
                 f"OCR {len(ocr_rows)}/{min(int(max_books), prediction.count)} · "
-                f"{matches} coincidencias de catálogo."
+                f"{len(ocr_rows)} nombres detectados."
             )
             yield (
                 detection_gallery.copy(), detection_rows.copy(), detection_message, status,
@@ -408,11 +417,10 @@ def run_library_pipeline(image, confidence, max_books, *path_overrides):
         )
         return
 
-    matches = sum(row[4] != "Sin coincidencia" for row in ocr_rows)
     yield (
         detection_gallery, detection_rows, detection_message, status,
         ocr_gallery, ocr_rows,
-        f"OCR finalizado: {len(ocr_rows)} lomos leídos y {matches} coincidencias de catálogo.",
+        f"OCR finalizado: {len(ocr_rows)} lomos leídos.",
     )
 
 
@@ -455,7 +463,7 @@ def build_app():
     )[:3] if examples_dir.is_dir() else []
     ocr_rows, ocr_stats, ocr_gallery = ocr_experiment()
 
-    with gr.Blocks(title="Lumen · Inventario bibliográfico", css=APP_CSS) as app:
+    with gr.Blocks(title="Inventario bibliográfico", css=APP_CSS) as app:
         gr.HTML(f"""
         <header class="library-topbar">
             <div class="library-brand">
@@ -466,7 +474,7 @@ def build_app():
                         <path d="M5 8h1M11.5 11h1M18 7h1" stroke="currentColor" stroke-width="1.5"/>
                     </svg>
                 </span>
-                <span><strong>Lumen</strong><small>Inventario bibliográfico</small></span>
+                <span><strong>Inventario bibliográfico</strong><small>Visión artificial</small></span>
             </div>
             <div class="library-topbar-note">YOLO26 · OCR local</div>
         </header>
@@ -474,21 +482,21 @@ def build_app():
             <div>
                 <p class="library-kicker">Visión artificial para bibliotecas</p>
                 <h1>Tu biblioteca, leída <em>lomo a lomo.</em></h1>
-                <p class="library-hero-copy">Lumen segmenta cada libro con YOLO26, endereza su lomo,
-                recupera el texto con OCR y lo contrasta con el catálogo de la colección.</p>
+                <p class="library-hero-copy">El sistema segmenta cada libro con YOLO26, endereza su lomo
+                y recupera el nombre visible mediante OCR.</p>
             </div>
             <div class="library-stats" aria-label="Resumen del laboratorio">
                 <div class="library-stat"><strong>YOLO26</strong><span>modelo elegido</span></div>
                 <div class="library-stat"><strong>{escape(ocr_stats['crops'])}</strong><span>lomos evaluados</span></div>
                 <div class="library-stat"><strong>{escape(ocr_stats['confidence'])}</strong><span>confianza OCR</span></div>
-                <div class="library-stat"><strong>29</strong><span>libros en catálogo</span></div>
+                <div class="library-stat"><strong>{escape(ocr_stats['readings'])}</strong><span>nombres detectados</span></div>
             </div>
         </section>
         <div class="library-flow" aria-label="Flujo del inventario visual">
             <div class="library-flow-item"><b>01</b><span><strong>Segmenta</strong>YOLO26s-seg</span></div>
             <div class="library-flow-item"><b>02</b><span><strong>Endereza</strong>Recorte por máscara</span></div>
             <div class="library-flow-item"><b>03</b><span><strong>Lee</strong>PaddleOCR</span></div>
-            <div class="library-flow-item"><b>04</b><span><strong>Identifica</strong>Catálogo local</span></div>
+            <div class="library-flow-item"><b>04</b><span><strong>Entrega</strong>Nombres detectados</span></div>
         </div>
         """)
 
@@ -533,13 +541,13 @@ def build_app():
                 gr.HTML('<div class="pipeline-card"><b>01</b><strong>Segmentación</strong><span>YOLO26 encuentra cada instancia y produce su máscara.</span></div>')
                 gr.HTML('<div class="pipeline-card"><b>02</b><strong>Recorte orientado</strong><span>El polígono se endereza y mejora con contraste CLAHE.</span></div>')
                 gr.HTML('<div class="pipeline-card"><b>03</b><strong>Lectura OCR</strong><span>PaddleOCR prueba orientaciones y conserva la lectura más confiable.</span></div>')
-                gr.HTML('<div class="pipeline-card"><b>04</b><strong>Catálogo</strong><span>RapidFuzz compara el texto contra 29 títulos con umbral 85.</span></div>')
+                gr.HTML('<div class="pipeline-card"><b>04</b><strong>Resultado</strong><span>La interfaz muestra el nombre leído y su confianza por cada lomo.</span></div>')
 
         default_paths = [str(spec.path) for spec in MODELS]
         with gr.Group(elem_classes=["library-section"]):
             gr.HTML(_section_heading(
                 "03 · Mesa de consulta", "Traé un estante",
-                "Subí una imagen y ajustá la sensibilidad. Lumen ejecuta siempre YOLO26s-seg, el modelo seleccionado por el experimento.",
+                "Subí una imagen y ajustá la sensibilidad. La aplicación ejecuta siempre YOLO26s-seg, el modelo seleccionado por el experimento.",
             ))
             with gr.Row(equal_height=True):
                 with gr.Column(scale=3):
@@ -559,7 +567,10 @@ def build_app():
                         '<p>La primera ejecución puede tardar más mientras se carga el checkpoint.</p></div>'
                     )
                     status = gr.HTML(value=primary_checkpoint_status(default_paths[PRIMARY_MODEL_INDEX]))
-                    confidence = gr.Slider(0.05, 0.95, value=0.50, step=0.05, label="Confianza mínima")
+                    confidence = gr.Slider(
+                        0.05, 0.95, value=0.50, step=0.05, label="Confianza mínima",
+                        elem_id="confidence-slider",
+                    )
                     max_books = gr.Slider(
                         1, 60, value=10, step=1, label="Máximo de lomos para OCR",
                         info="Se priorizan las detecciones con mayor confianza.",
@@ -605,7 +616,7 @@ def build_app():
         with gr.Group(elem_classes=["library-section"]):
             gr.HTML(_section_heading(
                 "05 · OCR en vivo", "Lecturas de este estante",
-                "Cada máscara se transforma en un recorte orientado. PaddleOCR prueba 0°/90°/270°, conserva la lectura más confiable y RapidFuzz consulta el catálogo.",
+                "Cada máscara se transforma en un recorte orientado. PaddleOCR prueba 0°/90°/270° y conserva el nombre leído con mayor confianza.",
             ))
             live_ocr_status = gr.Markdown(
                 "El OCR se ejecutará después de segmentar los lomos.",
@@ -622,13 +633,13 @@ def build_app():
             )
             live_ocr_table = gr.Dataframe(
                 headers=LIVE_OCR_HEADERS,
-                datatype=["number", "str", "number", "str", "str", "str", "str", "number"],
+                datatype=["number", "str", "number", "str", "number"],
                 interactive=False,
-                label="OCR y coincidencias contra catalogo/catalogo.xlsx",
+                label="Nombres detectados por OCR",
             )
             gr.Markdown(
-                "La primera ejecución descarga y prepara los modelos de PaddleOCR. Los lomos sin similitud "
-                "mínima de 85 se conservan como lecturas, pero se marcan sin coincidencia.",
+                "La primera ejecución descarga y prepara los modelos de PaddleOCR. "
+                "Cada fila corresponde al nombre visible leído en un lomo.",
                 elem_classes=["fine-print"],
             )
 
@@ -641,24 +652,24 @@ def build_app():
                 '<div class="ocr-kpis">'
                 f'<div class="ocr-kpi"><strong>{escape(ocr_stats["crops"])}</strong><span>recortes procesados</span></div>'
                 f'<div class="ocr-kpi"><strong>{escape(ocr_stats["confidence"])}</strong><span>confianza media</span></div>'
-                f'<div class="ocr-kpi"><strong>{escape(ocr_stats["matches"])}</strong><span>matches ≥ 85</span></div>'
+                f'<div class="ocr-kpi"><strong>{escape(ocr_stats["readings"])}</strong><span>nombres detectados</span></div>'
                 f'<div class="ocr-kpi"><strong>{escape(ocr_stats["latency"])}</strong><span>latencia media</span></div>'
                 '</div>'
             )
             if ocr_gallery:
                 gr.Gallery(
-                    value=ocr_gallery, label="Recortes identificados en el catálogo", columns=4,
+                    value=ocr_gallery, label="Recortes y nombres detectados", columns=4,
                     height="auto", preview=False, object_fit="contain", interactive=False,
                     elem_classes=["ocr-gallery"],
                 )
             gr.Dataframe(
                 value=ocr_rows, headers=OCR_HEADERS, datatype="str", interactive=False,
-                label="Lecturas de PaddleOCR con coincidencia de catálogo",
+                label="Nombres leídos por PaddleOCR",
             )
             gr.Markdown(
                 "Estos resultados pertenecen al experimento ya ejecutado, no a la fotografía cargada arriba. "
-                "La notebook prueba rotaciones 0°/90°/270°, elige la lectura de mayor confianza y aplica "
-                "matching `token_set_ratio` con umbral 85.", elem_classes=["fine-print"],
+                "La notebook prueba rotaciones 0°/90°/270° y elige la lectura de mayor confianza.",
+                elem_classes=["fine-print"],
             )
         execution = run.click(
             run_library_pipeline,
@@ -685,8 +696,8 @@ def build_app():
             queue=False,
         )
         gr.HTML(
-            '<div class="library-footer"><span>Lumen · Inventario bibliográfico visual</span>'
-            '<span>YOLO26s-seg · PaddleOCR · catálogo local</span></div>'
+            '<div class="library-footer"><span>Inventario bibliográfico visual</span>'
+            '<span>YOLO26s-seg · PaddleOCR</span></div>'
         )
     return app
 

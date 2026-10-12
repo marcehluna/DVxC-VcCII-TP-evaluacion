@@ -14,7 +14,7 @@ Repo del TP de evaluación de Visión por Computadora II (CEIA).
 | `src/` | Scripts de train / eval / OCR / matching |
 | `notebooks/` | Experimentos Colab |
 | `results/` | Tablas, figuras y predicciones |
-| `demo/` | Front local del pipeline YOLO26s-seg → OCR → catálogo |
+| `demo/` | Front local del pipeline YOLO26s-seg → OCR |
 | `docs/` | Notas de experimento |
 | `carpeta-referencias/` | Pautas, papers y template IEEE |
 
@@ -63,16 +63,16 @@ Abrí la dirección que imprime la terminal (normalmente `http://127.0.0.1:7860`
 1. Revisá la ficha de **YOLO26s-seg**, elegido por su balance entre calidad de máscara, velocidad y utilidad del recorte para OCR. La comparación contra Mask R-CNN queda disponible como evidencia secundaria.
 2. Subí una foto de estantería (hasta 20 MB), pegá una imagen, usá la cámara o elegí un ejemplo de validación.
 3. Ajustá **Confianza mínima** (valor inicial: `0.50`) y el máximo de lomos que querés leer con OCR. Pulsá **Analizar estante**.
-4. Revisá las máscaras y, a medida que termina cada recorte, la sección **OCR en vivo**. Allí aparecen el texto, la confianza, la rotación elegida y la coincidencia contra el catálogo.
+4. Revisá las máscaras y, a medida que termina cada recorte, la sección **OCR en vivo**. Allí aparecen el nombre leído, la confianza y la rotación elegida.
 5. Consultá **Evidencia OCR** para contrastar la nueva ejecución con los 19 recortes previamente procesados por la notebook.
 
 La app busca YOLO26 primero en `results/checkpoints/yolo26s_seg/mejor_map50.pt` y, como ruta alternativa, en `pesos/yolo26s_seg/mejor_map50.pt`. También admite `DEMO_YOLO26_SEG_WEIGHTS` o una ruta editada desde la interfaz.
 
-### OCR y catálogo
+### OCR
 
-La demo ejecuta en vivo YOLO26s-seg → recorte orientado → CLAHE → PaddleOCR → matching con RapidFuzz. La implementación reutilizable está en `demo/ocr.py`; `notebooks/OCR.ipynb` no se modifica ni se importa. Como en el experimento, cada recorte se prueba en 0°/90°/270° y se conserva la lectura de mayor confianza. Los modelos móviles `PP-OCRv3_mobile_det` y `latin_PP-OCRv3_mobile_rec`, seleccionados por PaddleOCR para español en la notebook, se descargan en `.cache/paddlex/` durante la primera ejecución y se conservan para las siguientes.
+La demo ejecuta en vivo YOLO26s-seg → recorte orientado → CLAHE → PaddleOCR. La implementación reutilizable está en `demo/ocr.py`; `notebooks/OCR.ipynb` no se modifica ni se importa. Como en el experimento, cada recorte se prueba en 0°/90°/270° y se conserva la lectura de mayor confianza. Los modelos móviles `PP-OCRv3_mobile_det` y `latin_PP-OCRv3_mobile_rec`, seleccionados por PaddleOCR para español en la notebook, se descargan en `.cache/paddlex/` durante la primera ejecución y se conservan para las siguientes.
 
-Como referencia experimental, la notebook procesó 19 recortes de las dos fotos de `fotos_propias/`. PaddleOCR obtuvo una confianza media de `0.949`, una latencia media registrada de `649 ms` y 8 coincidencias sobre 19 con umbral de similitud 85 contra los 29 títulos de `catalogo/catalogo.xlsx`.
+Como referencia experimental, la notebook procesó 19 recortes de las dos fotos de `fotos_propias/`. PaddleOCR obtuvo una confianza media de `0.949` y una latencia media registrada de `649 ms`. La interfaz muestra directamente los nombres leídos, sin exponer la coincidencia contra catálogo.
 
 Los CSV de `resultados_ocr/` alimentan solamente la sección de evidencia histórica; la tabla **OCR en vivo** se calcula desde la fotografía recién cargada.
 

@@ -71,7 +71,9 @@ class OCRTests(unittest.TestCase):
             frames = list(run_library_pipeline(image, .5, 10, *paths))
 
         self.assertIn("OCR finalizado", frames[-1][6])
-        self.assertEqual(frames[-1][5][0][4], "EL PRINCIPE")
+        self.assertEqual(frames[-1][5][0][1], "El príncipe")
+        self.assertEqual(len(frames[-1][5][0]), 5)
+        self.assertNotIn("coincidencias", frames[-1][6])
         self.assertEqual(len(frames[-1][4]), 1)
 
 

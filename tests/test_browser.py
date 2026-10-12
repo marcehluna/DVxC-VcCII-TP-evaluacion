@@ -35,7 +35,7 @@ class BrowserTest(unittest.TestCase):
             page.locator('#historical-metrics span[data-editable="false"]:visible').filter(
                 has_text=re.compile(r"^0\.776$")).first.wait_for()
             page.get_by_text("Resultados del experimento", exact=True).wait_for()
-            page.get_by_text("8/19", exact=True).wait_for()
+            page.get_by_text("19/19", exact=True).wait_for()
             page.screenshot(path=str(artifacts / "demo-light.png"), full_page=True)
 
             # El checkpoint elegido permite verificar el recorrido principal en CPU/GPU.
